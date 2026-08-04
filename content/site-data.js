@@ -70,8 +70,6 @@ window.SITE_DATA = {
     { title: "Pexels", url: "https://www.pexels.com/", category: "图片视频", description: "免费图片与视频素材库。", tag: "素材" },
     { title: "Unsplash", url: "https://unsplash.com/", category: "图片视频", description: "高质量摄影图片素材网站。", tag: "摄影" },
 
-    { title: "E-Hentai Galleries", url: "https://e-hentai.org/", category: "其他", description: "E-Hentai Galleries 网站入口。", tag: "图库" },
-
     { title: "APKMirror", url: "https://www.apkmirror.com/", category: "安装", description: "Android APK 应用下载与版本归档网站。", tag: "Android" }
   ],
 
