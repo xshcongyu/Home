@@ -4,6 +4,7 @@
 
 - 固定顶部导航与移动端菜单
 - 首页与个人简介
+- 本地头像与可交互鲨鱼水域组件
 - 浏览器端文档转换工具
 - AI 写作模式化特征分析
 - 可搜索、筛选和切换视图的网页导航
@@ -76,6 +77,9 @@ content/site-data.js
 ├── index.html
 ├── styles.css
 ├── app.js
+├── assets/
+│   ├── avatar.jpg
+│   └── shark.png
 ├── content/
 │   └── site-data.js
 ├── .nojekyll

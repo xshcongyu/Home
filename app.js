@@ -60,6 +60,72 @@
     toastTimer = setTimeout(() => toast.classList.remove("is-visible"), 2600);
   }
 
+  function initSharkWidgets() {
+    document.querySelectorAll("[data-shark-widget]").forEach((widget) => {
+      const water = widget.querySelector("[data-shark-water]");
+      const sprite = widget.querySelector("[data-shark-sprite]");
+      const layer = widget.querySelector("[data-bubble-layer]");
+      const depth = widget.querySelector("[data-shark-depth]");
+      const hint = widget.querySelector("[data-shark-hint]");
+      const feed = widget.querySelector("[data-shark-feed]");
+      let lastX = 56;
+      let lastY = 51;
+
+      function releaseBubbles(x = lastX, y = lastY, count = 8) {
+        for (let index = 0; index < count; index += 1) {
+          const bubble = document.createElement("i");
+          const size = 4 + Math.random() * 9;
+          bubble.className = "water-bubble";
+          bubble.style.left = `${Math.max(4, Math.min(96, x + (Math.random() - 0.5) * 13))}%`;
+          bubble.style.top = `${Math.max(20, Math.min(92, y + (Math.random() - 0.5) * 10))}%`;
+          bubble.style.setProperty("--bubble-size", `${size}px`);
+          bubble.style.setProperty("--bubble-drift", `${(Math.random() - 0.5) * 48}px`);
+          bubble.style.animationDelay = `${Math.random() * 0.16}s`;
+          layer.appendChild(bubble);
+          bubble.addEventListener("animationend", () => bubble.remove(), { once: true });
+        }
+      }
+
+      function guideShark(event) {
+        const rect = water.getBoundingClientRect();
+        const x = Math.max(18, Math.min(82, ((event.clientX - rect.left) / rect.width) * 100));
+        const y = Math.max(24, Math.min(76, ((event.clientY - rect.top) / rect.height) * 100));
+        const direction = x < lastX ? -1 : 1;
+        const angle = Math.max(-12, Math.min(12, (y - lastY) * 0.55));
+        sprite.style.setProperty("--shark-x", `${x}%`);
+        sprite.style.setProperty("--shark-y", `${y}%`);
+        sprite.style.setProperty("--shark-flip", String(direction));
+        sprite.style.setProperty("--shark-angle", `${direction < 0 ? -angle : angle}deg`);
+        depth.textContent = `深度 ${String(Math.round(3 + y / 6)).padStart(2, "0")}m`;
+        lastX = x;
+        lastY = y;
+      }
+
+      water.addEventListener("pointermove", guideShark);
+      water.addEventListener("pointerdown", (event) => {
+        guideShark(event);
+        releaseBubbles(lastX, lastY, 7);
+        widget.classList.add("is-excited");
+        setTimeout(() => widget.classList.remove("is-excited"), 620);
+      });
+      water.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          releaseBubbles(56, 58, 10);
+        }
+      });
+      feed.addEventListener("click", () => {
+        releaseBubbles(lastX, lastY, 13);
+        widget.classList.add("is-excited");
+        hint.textContent = "鲨鱼收到啦！";
+        setTimeout(() => {
+          widget.classList.remove("is-excited");
+          hint.textContent = "移动指针，引导鲨鱼";
+        }, 1100);
+      });
+    });
+  }
+
   function currentLocation() {
     const raw = location.hash.slice(1) || "/";
     const [path, queryString = ""] = raw.split("?");
@@ -76,14 +142,36 @@
     });
   }
 
-  function pageHero(kicker, title, muted, copy, actions = "", compact = true) {
+  function sharkGraphic() {
+    return '<img class="shark-art shark-photo" src="./assets/shark.png" alt="" aria-hidden="true" />';
+  }
+
+  function sharkWidget(label, compact = false) {
     return `
-      <section class="hero ${compact ? "compact" : ""}">
+      <aside class="shark-widget ${compact ? "is-compact" : ""}" data-shark-widget aria-label="${escapeHTML(label)}">
+        <div class="shark-widget-head"><span><i></i> CONGYU BAY</span><b data-shark-depth>深度 08m</b></div>
+        <div class="shark-water" data-shark-water role="button" tabindex="0" aria-label="移动指针引导鲨鱼，点击水面产生气泡">
+          <div class="current-lines" aria-hidden="true"><i></i><i></i><i></i></div>
+          <div class="bubble-layer" data-bubble-layer aria-hidden="true"></div>
+          <div class="shark-sprite" data-shark-sprite>${sharkGraphic()}</div>
+          <span class="water-label">POINTER CURRENT</span>
+        </div>
+        <div class="shark-widget-foot"><span data-shark-hint>移动指针，引导鲨鱼</span><button class="shark-feed" data-shark-feed type="button">投喂 +</button></div>
+      </aside>`;
+  }
+
+  function pageHero(kicker, title, muted, copy, actions = "", compact = true, aside = "") {
+    const content = `
+      <div class="hero-copy-column">
+        <span class="eyebrow">${escapeHTML(kicker)}</span>
+        <h1>${escapeHTML(title)}${muted ? `<span class="muted-line">${escapeHTML(muted)}</span>` : ""}</h1>
+        ${copy ? `<p class="hero-copy">${escapeHTML(copy)}</p>` : ""}
+        ${actions ? `<div class="hero-actions">${actions}</div>` : ""}
+      </div>`;
+    return `
+      <section class="hero ${compact ? "compact" : ""} ${aside ? "has-widget" : ""}">
         <div class="hero-inner page-shell">
-          <span class="eyebrow">${escapeHTML(kicker)}</span>
-          <h1>${escapeHTML(title)}${muted ? `<span class="muted-line">${escapeHTML(muted)}</span>` : ""}</h1>
-          ${copy ? `<p class="hero-copy">${escapeHTML(copy)}</p>` : ""}
-          ${actions ? `<div class="hero-actions">${actions}</div>` : ""}
+          ${aside ? `<div class="hero-main-grid">${content}${aside}</div>` : content}
         </div>
       </section>`;
   }
@@ -112,13 +200,18 @@
     app.innerHTML = `
       <section class="hero">
         <div class="hero-inner page-shell">
-          <span class="eyebrow">学习 · 工具 · 网页 · 课表</span>
-          <h1>这里是<span class="muted-line">丛鱼的家。</span></h1>
-          <p class="hero-copy">把常用工具、网页书签与每学期的课程放在一个安静、清楚、随时可以抵达的地方。这里既是一张个人主页，也是一间持续整理的数字房间。</p>
-          <div class="hero-actions">
-            <a class="button primary" href="#/navigation">浏览网页导航 →</a>
-            <a class="button" href="#/schedule">查看学期课表</a>
-            <a class="button ghost" href="#/about">认识丛鱼 →</a>
+          <div class="hero-main-grid">
+            <div class="hero-copy-column">
+              <span class="eyebrow">学习 · 工具 · 网页 · 课表</span>
+              <h1>这里是<span class="muted-line">丛鱼的家</span></h1>
+              <p class="hero-copy">把常用工具、网页书签与每学期的课程放在一个安静、清楚、随时可以抵达的地方。这里既是一张个人主页，也是一间持续整理的数字房间。</p>
+              <div class="hero-actions">
+                <a class="button primary" href="#/navigation">浏览网页导航 →</a>
+                <a class="button" href="#/schedule">查看学期课表</a>
+                <a class="button ghost" href="#/about">认识丛鱼 →</a>
+              </div>
+            </div>
+            ${sharkWidget("首页互动鲨鱼水域")}
           </div>
           <div class="hero-stats">
             <div class="stat"><strong>${bookmarkCount}</strong><span>常用网页</span><small>分门别类，点击即达</small></div>
@@ -185,12 +278,12 @@
   function renderAbout() {
     const p = DATA.profile;
     app.innerHTML = `
-      ${pageHero("关于这个空间", "这里是", "丛鱼的家。", "一个用于收纳学习、工具、网页和课表的个人空间。它保持简单，也给未来的内容留出足够的位置。", '<a class="button primary" href="#about-content">开始认识 →</a><a class="button" href="#/navigation">看看常用网页</a>')}
+      ${pageHero("关于这个空间", "这里是", "丛鱼的家", "一个用于收纳学习、工具、网页和课表的个人空间。它保持简单，也给未来的内容留出足够的位置。", '<a class="button primary" href="#about-content">开始认识 →</a><a class="button" href="#/navigation">看看常用网页</a>', true, sharkWidget("个人简介互动鲨鱼水域", true))}
       <section class="section" id="about-content">
         <div class="page-shell about-layout">
           <aside class="portrait-card">
-            <div class="portrait-symbol" aria-hidden="true"><svg viewBox="0 0 100 100"><path d="M12 50c16-24 42-34 70-22L92 14v72L82 72C54 84 28 74 12 50Z"/><circle cx="71" cy="42" r="3" fill="currentColor"/><path d="M26 50h21M38 38l10 12-10 12"/></svg></div>
-            <div><span class="section-kicker">Congyu</span><h2>${escapeHTML(p.name)}</h2><p>经济学专业在读。这个页面暂时保留为简洁版本，之后可以继续补充头像、经历、项目与联系方式。</p><div class="profile-chips">${p.tags.map((tag) => `<span class="chip">${escapeHTML(tag)}</span>`).join("")}</div></div>
+            <div class="portrait-symbol"><img src="./assets/avatar.jpg" alt="丛鱼的头像" /></div>
+            <div><span class="section-kicker">Congyu</span><h2>${escapeHTML(p.name)}</h2><p>经济学专业在读。这里记录学习轨迹、常用工具与持续整理中的个人知识空间。</p><div class="profile-chips">${p.tags.map((tag) => `<span class="chip">${escapeHTML(tag)}</span>`).join("")}</div></div>
           </aside>
           <div>
             <article class="prose-block"><span class="section-kicker">自我介绍</span><h2>${escapeHTML(p.title)}</h2><p>${escapeHTML(p.intro)}</p><p>我希望这个网站不只是个人名片，也能真正解决每天会遇到的小问题：快速找到常用网站、检查本学期课程、处理简单文档，或者把值得保留的信息归档起来。</p></article>
@@ -575,7 +668,7 @@
               <button class="category-button ${navState.category === "全部" ? "is-active" : ""}" type="button" data-category="全部"><b>全</b><span>全部网页</span><span>${DATA.bookmarks.length}</span></button>
               ${DATA.categories.map((category, index) => `<button class="category-button ${navState.category === category ? "is-active" : ""}" type="button" data-category="${escapeHTML(category)}"><b style="background:${TONES[index % TONES.length].bg};color:${TONES[index % TONES.length].accent}">${escapeHTML(category.slice(0, 1))}</b><span>${escapeHTML(category)}</span><span>${categoryCount(category)}</span></button>`).join("")}
             </aside>
-            <div class="bookmark-area"><div class="bookmark-meta"><span id="bookmark-count"></span><span>当前内容为可替换的示例导航</span></div><div id="bookmark-results"></div></div>
+            <div class="bookmark-area"><div class="bookmark-meta"><span id="bookmark-count"></span><span>按个人书签分类整理</span></div><div id="bookmark-results"></div></div>
           </div>
         </div>
       </section>`;
@@ -677,6 +770,7 @@
     else if (path === "/navigation") { document.title = "网页导航 · 丛鱼的家"; renderNavigation(query); }
     else if (path === "/schedule") { document.title = "学期课表 · 丛鱼的家"; renderSchedule(query); }
     else { location.hash = "/"; return; }
+    initSharkWidgets();
     window.scrollTo({ top: 0, behavior: "instant" });
   }
 

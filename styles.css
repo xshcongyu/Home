@@ -150,23 +150,35 @@ svg {
 }
 
 .brand-mark {
-  width: 22px;
+  width: 27px;
   height: 22px;
 }
 
 .brand-mark svg {
   width: 100%;
   height: 100%;
-  fill: none;
-  stroke: currentColor;
+  fill: currentColor;
+  stroke: none;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-width: 1.75;
 }
 
 .brand-mark circle {
-  fill: currentColor;
+  fill: var(--paper);
   stroke: none;
+}
+
+.brand-mark .brand-gill {
+  fill: none;
+  stroke: var(--paper);
+  stroke-width: 1.5;
+}
+
+.brand-mark img {
+  width: 100%;
+  height: 100%;
+  border-radius: 2px;
+  object-fit: contain;
 }
 
 .main-nav {
@@ -313,6 +325,21 @@ main {
   padding: 80px 0 62px;
 }
 
+.hero-main-grid {
+  display: grid;
+  align-items: center;
+  gap: clamp(36px, 5vw, 72px);
+  grid-template-columns: minmax(0, 1.45fr) minmax(330px, 0.75fr);
+}
+
+.hero-copy-column {
+  min-width: 0;
+}
+
+.hero.has-widget .hero-main-grid {
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+}
+
 .eyebrow {
   display: inline-flex;
   align-items: center;
@@ -421,6 +448,245 @@ main {
   padding-top: 23px;
   border-top: 1px solid var(--line);
   grid-template-columns: repeat(4, 1fr);
+}
+
+/* Interactive shark water */
+.shark-widget {
+  width: 100%;
+  max-width: 430px;
+  justify-self: end;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 17px;
+  background: color-mix(in srgb, var(--card) 90%, var(--blue-soft));
+  box-shadow: 0 24px 60px rgba(35, 54, 62, 0.1);
+}
+
+.shark-widget-head,
+.shark-widget-foot {
+  display: flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 14px;
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: 0.09em;
+}
+
+.shark-widget-head span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--ink-2);
+  font-weight: 700;
+}
+
+.shark-widget-head i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--green) 14%, transparent);
+}
+
+.shark-widget-head b {
+  font-weight: 500;
+}
+
+.shark-water {
+  position: relative;
+  min-height: 286px;
+  overflow: hidden;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background:
+    radial-gradient(circle at 76% 20%, rgba(255, 255, 255, 0.62), transparent 18%),
+    radial-gradient(circle at 1px 1px, rgba(39, 141, 209, 0.12) 1px, transparent 1.5px),
+    linear-gradient(145deg, color-mix(in srgb, var(--blue-soft) 82%, white), color-mix(in srgb, var(--green-soft) 78%, white));
+  background-size: auto, 22px 22px, auto;
+  cursor: crosshair;
+  outline: none;
+  touch-action: none;
+}
+
+:root[data-theme="dark"] .shark-water {
+  background:
+    radial-gradient(circle at 76% 20%, rgba(255, 255, 255, 0.1), transparent 18%),
+    radial-gradient(circle at 1px 1px, rgba(141, 211, 255, 0.12) 1px, transparent 1.5px),
+    linear-gradient(145deg, color-mix(in srgb, var(--blue-soft) 88%, black), color-mix(in srgb, var(--green-soft) 82%, black));
+  background-size: auto, 22px 22px, auto;
+}
+
+.shark-water:focus-visible {
+  box-shadow: inset 0 0 0 3px var(--blue);
+}
+
+.current-lines {
+  position: absolute;
+  inset: 0;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.current-lines i {
+  position: absolute;
+  left: -20%;
+  width: 48%;
+  height: 1px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--blue) 48%, transparent), transparent);
+  animation: current-drift 6s linear infinite;
+}
+
+.current-lines i:nth-child(1) { top: 24%; }
+.current-lines i:nth-child(2) { top: 52%; animation-delay: -2.1s; animation-duration: 7.3s; }
+.current-lines i:nth-child(3) { top: 76%; animation-delay: -4s; animation-duration: 8.4s; }
+
+.shark-sprite {
+  --shark-angle: 0deg;
+  --shark-flip: 1;
+  --shark-x: 56%;
+  --shark-y: 51%;
+  position: absolute;
+  z-index: 2;
+  top: var(--shark-y);
+  left: var(--shark-x);
+  width: 42%;
+  filter: drop-shadow(0 10px 10px rgba(19, 49, 60, 0.12));
+  pointer-events: none;
+  transform: translate(-50%, -50%) rotate(var(--shark-angle)) scaleX(var(--shark-flip));
+  transform-origin: center;
+  transition: top 0.34s cubic-bezier(.2,.75,.2,1), left 0.34s cubic-bezier(.2,.75,.2,1), transform 0.25s ease;
+}
+
+.shark-art {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.shark-photo {
+  border: 0;
+  background: transparent;
+  filter: drop-shadow(0 9px 10px rgba(19, 49, 60, 0.14));
+}
+
+.shark-art .shark-body,
+.shark-art .shark-tail,
+.shark-art .shark-fin {
+  fill: var(--ink);
+}
+
+.shark-art .shark-belly {
+  fill: color-mix(in srgb, var(--paper) 85%, var(--blue-soft));
+  opacity: 0.72;
+}
+
+.shark-art .shark-eye {
+  fill: var(--paper);
+}
+
+.shark-art .shark-gill {
+  fill: none;
+  stroke: var(--paper);
+  stroke-linecap: round;
+  stroke-width: 1.5;
+}
+
+.shark-tail {
+  transform-box: fill-box;
+  transform-origin: 100% 50%;
+  animation: shark-tail 1.05s ease-in-out infinite alternate;
+}
+
+.shark-widget.is-excited .shark-tail {
+  animation-duration: 0.19s;
+}
+
+.shark-widget.is-excited .shark-photo {
+  animation: shark-photo-pulse .46s ease-in-out;
+}
+
+.bubble-layer {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.water-bubble {
+  position: absolute;
+  width: var(--bubble-size);
+  height: var(--bubble-size);
+  border: 1px solid rgba(255,255,255,.82);
+  border-radius: 50%;
+  background: rgba(255,255,255,.12);
+  box-shadow: inset 1px 1px 2px rgba(255,255,255,.55);
+  animation: bubble-rise 1.7s ease-out forwards;
+}
+
+.water-label {
+  position: absolute;
+  right: 12px;
+  bottom: 10px;
+  color: color-mix(in srgb, var(--ink) 35%, transparent);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  pointer-events: none;
+}
+
+.shark-widget-foot {
+  min-height: 48px;
+  letter-spacing: 0;
+}
+
+.shark-feed {
+  min-height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--ink);
+  font-size: 9px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.shark-feed:hover {
+  border-color: var(--line-strong);
+  transform: translateY(-1px);
+}
+
+.shark-widget.is-compact .shark-water {
+  min-height: 220px;
+}
+
+.shark-widget.is-compact .shark-sprite {
+  width: 40%;
+}
+
+@keyframes shark-tail {
+  from { transform: rotate(-5deg); }
+  to { transform: rotate(7deg); }
+}
+
+@keyframes shark-photo-pulse {
+  50% { filter: brightness(1.08); transform: scale(1.035); }
+}
+
+@keyframes current-drift {
+  from { transform: translateX(0); }
+  to { transform: translateX(300%); }
+}
+
+@keyframes bubble-rise {
+  0% { opacity: 0; transform: translate(0, 0) scale(.55); }
+  18% { opacity: .9; }
+  100% { opacity: 0; transform: translate(var(--bubble-drift), -150px) scale(1.15); }
 }
 
 .stat {
@@ -608,11 +874,14 @@ main {
 
 .home-dashboard {
   display: grid;
+  min-width: 0;
   gap: 16px;
   grid-template-columns: 1.15fr 0.85fr;
 }
 
 .panel {
+  min-width: 0;
+  overflow: hidden;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--card);
@@ -831,6 +1100,14 @@ main {
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 1.1;
+}
+
+.portrait-symbol img {
+  width: 104%;
+  height: 104%;
+  max-width: none;
+  object-fit: cover;
+  object-position: center 47%;
 }
 
 .portrait-card h2 {
@@ -2035,6 +2312,9 @@ main {
   .about-layout { grid-template-columns: 1fr; gap: 48px; }
   .portrait-card { position: static; display: grid; grid-template-columns: 180px 1fr; gap: 24px; }
   .portrait-symbol { margin: 0; }
+  .hero-main-grid { gap: 28px; grid-template-columns: minmax(0, 1.15fr) minmax(290px, .85fr); }
+  .hero.has-widget .hero-main-grid { grid-template-columns: minmax(0, 1.15fr) minmax(280px, .85fr); }
+  .shark-water { min-height: 250px; }
 }
 
 @media (max-width: 720px) {
@@ -2046,6 +2326,11 @@ main {
   .hero.compact .hero-inner { padding: 62px 0 48px; }
   .hero h1, .hero.compact h1 { font-size: clamp(43px, 13vw, 64px); }
   .hero-copy { font-size: 14px; }
+  .hero-main-grid,
+  .hero.has-widget .hero-main-grid { grid-template-columns: 1fr; gap: 36px; }
+  .shark-widget { max-width: none; justify-self: stretch; }
+  .shark-water,
+  .shark-widget.is-compact .shark-water { min-height: 230px; }
   .hero-stats { grid-template-columns: repeat(2, 1fr); gap: 18px 8px; margin-top: 48px; }
   .section { padding: 68px 0; }
   .section-heading { display: block; }
