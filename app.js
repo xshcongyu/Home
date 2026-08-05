@@ -51,6 +51,7 @@
       file: '<path d="M6 2h8l4 4v16H6z"/><path d="M14 2v5h5M9 12h6M9 16h6"/>',
       scan: '<path d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4M8 12h8M12 8v8"/>',
       image: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m5 18 5-5 3 3 2-2 4 4M7 2v4M17 2v4"/>',
+      eraser: '<path d="m4.5 15.5 8.8-10a2.4 2.4 0 0 1 3.4-.2l2 1.8a2.4 2.4 0 0 1 .2 3.4l-8.8 10H6.8l-2.3-2a2 2 0 0 1 0-3Z"/><path d="m10 20.5 6.2-7.1M9.2 10.2l5 4.4M3 21h18"/>',
       search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',
       arrow: '<path d="M5 12h14M14 7l5 5-5 5"/>'
     };
@@ -111,7 +112,7 @@
           <section class="motion-panel motion-clock"><span data-motion-date>正在读取日期</span><strong data-motion-time>--:--</strong><small>ASIA / SHANGHAI</small></section>
           <section class="motion-panel motion-library"><small>LIBRARY</small><strong>${DATA.bookmarks.length}</strong><span>常用网页</span></section>
           <section class="motion-panel motion-term"><small>SEMESTER</small><strong>${DATA.semesters.length}</strong><span>学期课表</span></section>
-          <section class="motion-panel motion-tools"><small>LOCAL</small><strong>03</strong><span>浏览器工具</span></section>
+          <section class="motion-panel motion-tools"><small>LOCAL</small><strong>04</strong><span>浏览器工具</span></section>
           <div class="motion-message"><i></i><span data-motion-word>整理常用网页</span></div>
         </div>
         <div class="motion-collage-foot"><span>${escapeHTML(status)}</span><b>无需操作 · 自动播放</b></div>
@@ -175,7 +176,7 @@
             <div class="stat"><strong>${bookmarkCount}</strong><span>常用网页</span><small>分门别类，点击即达</small></div>
             <div class="stat"><strong>${categoryCount}</strong><span>导航分类</span><small>支持筛选与关键词搜索</small></div>
             <div class="stat"><strong>${DATA.semesters.length}</strong><span>学期课表</span><small>课表与课程详情联动</small></div>
-            <div class="stat"><strong>3</strong><span>浏览器工具</span><small>文档转换 · 文字提取 · 写作分析</small></div>
+              <div class="stat"><strong>4</strong><span>浏览器工具</span><small>文档转换 · 文字提取 · 图片修复 · 写作分析</small></div>
           </div>
         </div>
       </section>
@@ -228,7 +229,7 @@
       <section class="section dark">
         <div class="page-shell cta-grid">
           <div><span class="section-kicker">继续探索</span><h2>把需要的东西，<br>放在随手可及的地方。</h2><p>网页、课程、工具与个人信息都可以继续增长。现在先从最常用的一页开始。</p><div class="button-row"><a class="button primary" href="#/navigation">打开网页导航</a><a class="button" href="#/tools">使用工具</a></div></div>
-          <div class="check-card"><strong>当前已经包括</strong><span><i>✓</i>固定且响应式的顶部导航</span><span><i>✓</i>三学期彩色课表与完整详情</span><span><i>✓</i>可筛选、搜索的网页分类</span><span><i>✓</i>三项浏览器端工具</span><span><i>✓</i>适配 GitHub Pages 的静态结构</span></div>
+            <div class="check-card"><strong>当前已经包括</strong><span><i>✓</i>固定且响应式的顶部导航</span><span><i>✓</i>三学期彩色课表与完整详情</span><span><i>✓</i>可筛选、搜索的网页分类</span><span><i>✓</i>四项浏览器端工具</span><span><i>✓</i>适配 GitHub Pages 的静态结构</span></div>
         </div>
       </section>`;
   }
@@ -258,6 +259,7 @@
         <h3>工具箱</h3>
         <a class="tool-nav-button ${active === "converter" ? "is-active" : ""}" href="#/tools/converter">${icon("file")} 文档转换</a>
         <a class="tool-nav-button ${active === "ocr" ? "is-active" : ""}" href="#/tools/ocr">${icon("image")} 文字提取</a>
+        <a class="tool-nav-button ${active === "watermark" ? "is-active" : ""}" href="#/tools/watermark">${icon("eraser")} 图片去水印</a>
         <a class="tool-nav-button ${active === "ai-check" ? "is-active" : ""}" href="#/tools/ai-check">${icon("scan")} AI 写作特征</a>
         <div class="sidebar-note">文档、图片和文本默认在当前浏览器中处理，不会主动上传你的内容。</div>
       </aside>`;
@@ -265,13 +267,14 @@
 
   function renderToolsOverview() {
     app.innerHTML = `
-      ${pageHero("浏览器端工具", "处理文档，", "提取图片文字。", "三项工具都优先在本地浏览器中运行：转换常见文本格式、从图片提取文字，以及进行透明、可解释的写作特征分析。")}
+      ${pageHero("浏览器端工具", "处理文档，", "修复图片与文字。", "四项工具都优先在本地浏览器中运行：转换常见文本格式、提取图片文字、局部修复图片，以及进行透明、可解释的写作特征分析。")}
       <section class="section">
         <div class="page-shell">
           <div class="section-heading"><div><span class="section-kicker">选择工具</span><h2>现在要处理什么？</h2><p>不需要账号。打开工具、放入内容、查看结果，需要时再下载。</p></div></div>
           <div class="tool-switcher">
             <a class="tool-choice" href="#/tools/converter"><span class="skill-icon tone-blue">${icon("file")}</span><div><h3>文档转换工具</h3><p>在 TXT、Markdown、HTML、JSON 和 CSV 之间转换，文件默认留在本机。</p></div><b>→</b></a>
             <a class="tool-choice" href="#/tools/ocr"><span class="skill-icon tone-green">${icon("image")}</span><div><h3>图片文字提取</h3><p>上传图片，在浏览器中识别简体中文和英文，并复制或下载结果。</p></div><b>→</b></a>
+            <a class="tool-choice" href="#/tools/watermark"><span class="skill-icon tone-blue">${icon("eraser")}</span><div><h3>图片去水印</h3><p>涂抹或框选水印区域，在浏览器本地修复，并可用仿制工具细调。</p></div><b>→</b></a>
             <a class="tool-choice" href="#/tools/ai-check"><span class="skill-icon tone-coral">${icon("scan")}</span><div><h3>AI 写作特征分析</h3><p>从句长、重复、连接词和模板表达等角度检查文章的模式化程度。</p></div><b>→</b></a>
           </div>
         </div>
@@ -351,6 +354,81 @@
     bindOCR();
   }
 
+  function renderWatermark() {
+    app.innerHTML = `
+      ${pageHero("工具 · 图片修复", "擦去不需要的水印，", "让画面重新完整。", "上传图片后涂抹或框选水印区域，使用浏览器本地算法修复；复杂纹理可以继续用仿制画笔细调。全程不上传图片，也不产生服务费用。")}
+      <section class="section">
+        <div class="page-shell tool-workspace">
+          ${toolNav("watermark")}
+          <div class="workspace-card watermark-workspace">
+            <div class="workspace-heading watermark-heading"><div><h2>图片去水印</h2><p>支持 JPG、PNG 与 WebP。先标记水印，再选择快速修复或透明水印还原。</p></div><span class="local-badge">● 本地处理</span></div>
+            <label class="wm-upload" id="wm-upload">
+              <input id="wm-file-input" type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp">
+              <span class="wm-upload-icon">${icon("image")}</span>
+              <span><b>选择图片或拖到这里</b>JPG · PNG · WebP，单张不超过 20 MB</span>
+            </label>
+            <div class="wm-editor" id="wm-editor" hidden>
+              <div class="wm-toolbar" aria-label="图片编辑工具栏">
+                <div class="wm-tool-group" aria-label="标记工具">
+                  <button class="wm-tool is-active" type="button" data-wm-tool="brush" title="画笔标记">画笔</button>
+                  <button class="wm-tool" type="button" data-wm-tool="rect" title="矩形框选">框选</button>
+                  <button class="wm-tool" type="button" data-wm-tool="eraser" title="擦除标记">橡皮</button>
+                  <button class="wm-tool" type="button" data-wm-tool="clone" title="仿制画笔，Alt+点击设置取样点">仿制</button>
+                  <button class="wm-tool" type="button" data-wm-tool="pan" title="拖动画布">移动</button>
+                </div>
+                <label class="wm-range"><span>笔刷 <b id="wm-size-label">36</b></span><input id="wm-brush-size" type="range" min="8" max="160" value="36"></label>
+                <label class="wm-zoom"><span>缩放</span><select class="select" id="wm-zoom"><option value="0.5">50%</option><option value="0.75">75%</option><option value="1" selected>100%</option><option value="1.5">150%</option><option value="2">200%</option></select></label>
+                <div class="wm-history">
+                  <button class="button ghost compact" id="wm-undo" type="button" disabled>撤销</button>
+                  <button class="button ghost compact" id="wm-redo" type="button" disabled>重做</button>
+                  <button class="button ghost compact" id="wm-clear-mask" type="button">清除标记</button>
+                </div>
+              </div>
+              <div class="wm-main">
+                <div class="wm-stage-wrap" id="wm-stage-wrap">
+                  <div class="wm-stage" id="wm-stage">
+                    <canvas id="wm-image-canvas" aria-label="待修复图片"></canvas>
+                    <canvas id="wm-mask-canvas" aria-label="水印区域标记层"></canvas>
+                    <span class="wm-clone-pin" id="wm-clone-pin" hidden aria-hidden="true"></span>
+                  </div>
+                </div>
+                <aside class="wm-controls">
+                  <section class="wm-control-card">
+                    <span class="section-kicker">01 · 区域修复</span>
+                    <h3>快速填补</h3>
+                    <p>适合文字、日期和面积较小的标志。算法会从标记边缘向内延展附近的颜色与纹理。</p>
+                    <button class="button primary wide" id="wm-repair" type="button">修复标记区域</button>
+                  </section>
+                  <section class="wm-control-card">
+                    <span class="section-kicker">02 · 半透明水印</span>
+                    <h3>反向还原</h3>
+                    <p>已知水印颜色与大致透明度时效果更好，常用于白色或黑色半透明文字。</p>
+                    <div class="wm-transparent-settings"><label><span>水印颜色</span><input id="wm-color" type="color" value="#ffffff"></label><label><span>不透明度 <b id="wm-opacity-label">35%</b></span><input id="wm-opacity" type="range" min="5" max="85" value="35"></label></div>
+                    <button class="button wide" id="wm-transparent" type="button">还原透明水印</button>
+                  </section>
+                  <section class="wm-control-card wm-help-card">
+                    <h3>复杂背景怎么处理？</h3>
+                    <p>选择“仿制”，按住 Alt 点击干净区域设置取样点，再在水印上涂抹。重复取样可减少纹理错位。</p>
+                  </section>
+                </aside>
+              </div>
+              <div class="wm-bottom-bar">
+                <div><strong id="wm-file-meta">图片已载入</strong><span id="wm-status">用画笔涂抹或框选需要去除的区域。</span></div>
+                <div class="wm-export-actions">
+                  <button class="button" id="wm-compare" type="button">按住查看原图</button>
+                  <button class="button ghost" id="wm-reset" type="button">恢复原图</button>
+                  <select class="select" id="wm-export-type" aria-label="导出格式"><option value="png">PNG</option><option value="jpeg">JPG</option></select>
+                  <button class="button primary" id="wm-download" type="button">下载结果</button>
+                </div>
+              </div>
+            </div>
+            <div class="wm-notice"><b>使用范围：</b>仅处理你本人拥有或已获授权的图片。自动修复会根据周围像素推测被遮挡内容，无法保证恢复水印下原本不存在于图片中的真实细节。</div>
+          </div>
+        </div>
+      </section>`;
+    bindWatermark();
+  }
+
   function renderAIChecker() {
     app.innerHTML = `
       ${pageHero("工具 · 写作分析", "看见文字中的", "AI 写作特征。", "从八组可解释指标、文本类型和样本长度综合判断，给出风险区间与段落线索，而不是伪装成确定的 AI 来源证明。")}
@@ -389,6 +467,7 @@
   function renderTools(path) {
     if (path === "/tools/converter") renderConverter();
     else if (path === "/tools/ocr") renderOCR();
+    else if (path === "/tools/watermark") renderWatermark();
     else if (path === "/tools/ai-check") renderAIChecker();
     else renderToolsOverview();
   }
@@ -783,6 +862,578 @@
       link.download = `${(selectedFile?.name || "ocr-result").replace(/\.[^.]+$/, "")}-文字提取.txt`;
       link.click();
       setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+    });
+  }
+
+  function bindWatermark() {
+    const fileInput = document.getElementById("wm-file-input");
+    const upload = document.getElementById("wm-upload");
+    const editor = document.getElementById("wm-editor");
+    const stageWrap = document.getElementById("wm-stage-wrap");
+    const stage = document.getElementById("wm-stage");
+    const imageCanvas = document.getElementById("wm-image-canvas");
+    const maskCanvas = document.getElementById("wm-mask-canvas");
+    const imageContext = imageCanvas.getContext("2d", { willReadFrequently: true });
+    const maskContext = maskCanvas.getContext("2d", { willReadFrequently: true });
+    const brushSize = document.getElementById("wm-brush-size");
+    const sizeLabel = document.getElementById("wm-size-label");
+    const zoomSelect = document.getElementById("wm-zoom");
+    const undoButton = document.getElementById("wm-undo");
+    const redoButton = document.getElementById("wm-redo");
+    const clearMaskButton = document.getElementById("wm-clear-mask");
+    const repairButton = document.getElementById("wm-repair");
+    const transparentButton = document.getElementById("wm-transparent");
+    const watermarkColor = document.getElementById("wm-color");
+    const watermarkOpacity = document.getElementById("wm-opacity");
+    const opacityLabel = document.getElementById("wm-opacity-label");
+    const compareButton = document.getElementById("wm-compare");
+    const resetButton = document.getElementById("wm-reset");
+    const downloadButton = document.getElementById("wm-download");
+    const exportType = document.getElementById("wm-export-type");
+    const fileMeta = document.getElementById("wm-file-meta");
+    const status = document.getElementById("wm-status");
+    const clonePin = document.getElementById("wm-clone-pin");
+    const toolButtons = Array.from(document.querySelectorAll("[data-wm-tool]"));
+
+    const MAX_PIXELS = 4000000;
+    const MAX_SIDE = 3000;
+    const HISTORY_LIMIT = 5;
+    let selectedTool = "brush";
+    let originalImage = null;
+    let originalWidth = 0;
+    let originalHeight = 0;
+    let baseName = "修复图片";
+    let drawing = false;
+    let changedDuringGesture = false;
+    let startPoint = null;
+    let previousPoint = null;
+    let rectangleStartMask = null;
+    let cloneSource = null;
+    let cloneOffset = null;
+    let cloneWorkingImage = null;
+    let panStart = null;
+    let history = [];
+    let historyIndex = -1;
+    let comparing = false;
+    let compareImage = null;
+    let busy = false;
+
+    function setStatus(message) { status.textContent = message; }
+
+    function setBusy(value) {
+      busy = value;
+      repairButton.disabled = value;
+      transparentButton.disabled = value;
+      downloadButton.disabled = value;
+      clearMaskButton.disabled = value;
+      resetButton.disabled = value;
+      toolButtons.forEach((button) => { button.disabled = value; });
+      updateHistoryButtons();
+    }
+
+    function updateHistoryButtons() {
+      undoButton.disabled = busy || historyIndex <= 0;
+      redoButton.disabled = busy || historyIndex < 0 || historyIndex >= history.length - 1;
+    }
+
+    function readMaskAlpha() {
+      const pixels = maskContext.getImageData(0, 0, maskCanvas.width, maskCanvas.height).data;
+      const alpha = new Uint8ClampedArray(maskCanvas.width * maskCanvas.height);
+      for (let source = 3, target = 0; source < pixels.length; source += 4, target += 1) alpha[target] = pixels[source];
+      return alpha;
+    }
+
+    function paintMaskAlpha(alpha) {
+      const layer = maskContext.createImageData(maskCanvas.width, maskCanvas.height);
+      for (let source = 0, target = 0; source < alpha.length; source += 1, target += 4) {
+        layer.data[target] = 224;
+        layer.data[target + 1] = 61;
+        layer.data[target + 2] = 82;
+        layer.data[target + 3] = alpha[source];
+      }
+      maskContext.putImageData(layer, 0, 0);
+    }
+
+    function makeSnapshot() {
+      return {
+        image: new Uint8ClampedArray(imageContext.getImageData(0, 0, imageCanvas.width, imageCanvas.height).data),
+        mask: readMaskAlpha(),
+        cloneSource: cloneSource ? { ...cloneSource } : null
+      };
+    }
+
+    function commitHistory() {
+      if (!originalImage) return;
+      history = history.slice(0, historyIndex + 1);
+      history.push(makeSnapshot());
+      if (history.length > HISTORY_LIMIT) history.shift();
+      historyIndex = history.length - 1;
+      updateHistoryButtons();
+    }
+
+    function restoreSnapshot(snapshot) {
+      const image = imageContext.createImageData(imageCanvas.width, imageCanvas.height);
+      image.data.set(snapshot.image);
+      imageContext.putImageData(image, 0, 0);
+      paintMaskAlpha(snapshot.mask);
+      cloneSource = snapshot.cloneSource ? { ...snapshot.cloneSource } : null;
+      updateClonePin();
+    }
+
+    function applyZoom() {
+      const zoom = Number(zoomSelect.value);
+      stage.style.width = `${Math.max(1, Math.round(imageCanvas.width * zoom))}px`;
+      stage.style.height = `${Math.max(1, Math.round(imageCanvas.height * zoom))}px`;
+    }
+
+    function updateClonePin() {
+      if (!cloneSource || !imageCanvas.width) {
+        clonePin.hidden = true;
+        return;
+      }
+      clonePin.hidden = false;
+      clonePin.style.left = `${cloneSource.x / imageCanvas.width * 100}%`;
+      clonePin.style.top = `${cloneSource.y / imageCanvas.height * 100}%`;
+    }
+
+    function setTool(tool) {
+      selectedTool = tool;
+      toolButtons.forEach((button) => button.classList.toggle("is-active", button.dataset.wmTool === tool));
+      maskCanvas.dataset.tool = tool;
+      const guidance = {
+        brush: "在水印上涂抹，红色区域会被修复。",
+        rect: "拖出矩形，适合框选日期、角标和整块文字。",
+        eraser: "擦除多余的红色标记。",
+        clone: cloneSource ? "在水印上涂抹以复制取样区域；按住 Alt 点击可重新取样。" : "按住 Alt 点击干净区域设置取样点，再在水印上涂抹。",
+        pan: "拖动画布查看其他位置，也可以调整缩放比例。"
+      };
+      setStatus(guidance[tool]);
+    }
+
+    function canvasPoint(event) {
+      const bounds = maskCanvas.getBoundingClientRect();
+      return {
+        x: Math.max(0, Math.min(maskCanvas.width - 1, (event.clientX - bounds.left) * maskCanvas.width / bounds.width)),
+        y: Math.max(0, Math.min(maskCanvas.height - 1, (event.clientY - bounds.top) * maskCanvas.height / bounds.height))
+      };
+    }
+
+    function drawMaskLine(from, to, erase = false) {
+      maskContext.save();
+      maskContext.globalCompositeOperation = erase ? "destination-out" : "source-over";
+      maskContext.strokeStyle = "rgba(224,61,82,.58)";
+      maskContext.fillStyle = "rgba(224,61,82,.58)";
+      maskContext.lineCap = "round";
+      maskContext.lineJoin = "round";
+      maskContext.lineWidth = Number(brushSize.value);
+      maskContext.beginPath();
+      maskContext.moveTo(from.x, from.y);
+      maskContext.lineTo(to.x, to.y);
+      maskContext.stroke();
+      if (Math.abs(from.x - to.x) < 0.5 && Math.abs(from.y - to.y) < 0.5) {
+        maskContext.beginPath();
+        maskContext.arc(to.x, to.y, Number(brushSize.value) / 2, 0, Math.PI * 2);
+        maskContext.fill();
+      }
+      maskContext.restore();
+    }
+
+    function clearMaskCircle(point, radius) {
+      maskContext.save();
+      maskContext.globalCompositeOperation = "destination-out";
+      maskContext.beginPath();
+      maskContext.arc(point.x, point.y, radius, 0, Math.PI * 2);
+      maskContext.fill();
+      maskContext.restore();
+    }
+
+    function cloneAt(point) {
+      if (!cloneWorkingImage || !cloneOffset) return;
+      const width = imageCanvas.width;
+      const height = imageCanvas.height;
+      const radius = Math.max(4, Number(brushSize.value) / 2);
+      const left = Math.max(0, Math.floor(point.x - radius));
+      const right = Math.min(width - 1, Math.ceil(point.x + radius));
+      const top = Math.max(0, Math.floor(point.y - radius));
+      const bottom = Math.min(height - 1, Math.ceil(point.y + radius));
+      const sourceData = cloneWorkingImage.source.data;
+      const targetData = cloneWorkingImage.target.data;
+      for (let y = top; y <= bottom; y += 1) {
+        for (let x = left; x <= right; x += 1) {
+          const distance = Math.hypot(x - point.x, y - point.y);
+          if (distance > radius) continue;
+          const sourceX = Math.round(x + cloneOffset.x);
+          const sourceY = Math.round(y + cloneOffset.y);
+          if (sourceX < 0 || sourceY < 0 || sourceX >= width || sourceY >= height) continue;
+          const targetIndex = (y * width + x) * 4;
+          const sourceIndex = (sourceY * width + sourceX) * 4;
+          const edge = Math.min(1, Math.max(0, (radius - distance) / Math.max(1, radius * 0.28)));
+          for (let channel = 0; channel < 3; channel += 1) targetData[targetIndex + channel] = Math.round(targetData[targetIndex + channel] * (1 - edge) + sourceData[sourceIndex + channel] * edge);
+          targetData[targetIndex + 3] = 255;
+        }
+      }
+      imageContext.putImageData(cloneWorkingImage.target, 0, 0, left, top, right - left + 1, bottom - top + 1);
+      clearMaskCircle(point, radius);
+    }
+
+    function cloneLine(from, to) {
+      const spacing = Math.max(2, Number(brushSize.value) * 0.16);
+      const distance = Math.hypot(to.x - from.x, to.y - from.y);
+      const steps = Math.max(1, Math.ceil(distance / spacing));
+      for (let index = 0; index <= steps; index += 1) {
+        const ratio = index / steps;
+        cloneAt({ x: from.x + (to.x - from.x) * ratio, y: from.y + (to.y - from.y) * ratio });
+      }
+    }
+
+    function hasMask() {
+      const pixels = maskContext.getImageData(0, 0, maskCanvas.width, maskCanvas.height).data;
+      for (let index = 3; index < pixels.length; index += 4) if (pixels[index] > 10) return true;
+      return false;
+    }
+
+    function clearMask() { maskContext.clearRect(0, 0, maskCanvas.width, maskCanvas.height); }
+
+    function colorFromHex(hex) {
+      return [parseInt(hex.slice(1, 3), 16), parseInt(hex.slice(3, 5), 16), parseInt(hex.slice(5, 7), 16)];
+    }
+
+    function repairMaskedArea() {
+      const width = imageCanvas.width;
+      const height = imageCanvas.height;
+      const image = imageContext.getImageData(0, 0, width, height);
+      const mask = readMaskAlpha();
+      const pending = new Uint8Array(width * height);
+      const queued = new Uint8Array(width * height);
+      const queue = [];
+      let marked = 0;
+      let minX = width, minY = height, maxX = -1, maxY = -1;
+
+      for (let index = 0; index < mask.length; index += 1) {
+        if (mask[index] < 18) continue;
+        pending[index] = 1;
+        marked += 1;
+        const x = index % width;
+        const y = Math.floor(index / width);
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+      }
+      if (!marked) return false;
+
+      const isBoundary = (x, y) => {
+        for (let dy = -1; dy <= 1; dy += 1) for (let dx = -1; dx <= 1; dx += 1) {
+          if (!dx && !dy) continue;
+          const nx = x + dx, ny = y + dy;
+          if (nx < 0 || ny < 0 || nx >= width || ny >= height || !pending[ny * width + nx]) return true;
+        }
+        return false;
+      };
+
+      for (let y = minY; y <= maxY; y += 1) for (let x = minX; x <= maxX; x += 1) {
+        const index = y * width + x;
+        if (pending[index] && isBoundary(x, y)) { queue.push(index); queued[index] = 1; }
+      }
+
+      let head = 0;
+      while (head < queue.length) {
+        const index = queue[head++];
+        if (!pending[index]) continue;
+        const x = index % width;
+        const y = Math.floor(index / width);
+        let red = 0, green = 0, blue = 0, total = 0;
+        let textureIndex = -1;
+        let textureWeight = -1;
+        for (let radius = 1; radius <= 3 && total < 0.9; radius += 1) {
+          for (let dy = -radius; dy <= radius; dy += 1) for (let dx = -radius; dx <= radius; dx += 1) {
+            if (!dx && !dy) continue;
+            const nx = x + dx, ny = y + dy;
+            if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
+            const neighbour = ny * width + nx;
+            if (pending[neighbour]) continue;
+            const distance = Math.hypot(dx, dy);
+            if (distance > radius + 0.25) continue;
+            const weight = 1 / (0.35 + distance * distance);
+            const pixel = neighbour * 4;
+            red += image.data[pixel] * weight;
+            green += image.data[pixel + 1] * weight;
+            blue += image.data[pixel + 2] * weight;
+            total += weight;
+            if (weight > textureWeight) { textureWeight = weight; textureIndex = pixel; }
+          }
+        }
+        if (!total) continue;
+        const pixel = index * 4;
+        const textureMix = 0.18;
+        image.data[pixel] = Math.round(red / total * (1 - textureMix) + image.data[textureIndex] * textureMix);
+        image.data[pixel + 1] = Math.round(green / total * (1 - textureMix) + image.data[textureIndex + 1] * textureMix);
+        image.data[pixel + 2] = Math.round(blue / total * (1 - textureMix) + image.data[textureIndex + 2] * textureMix);
+        image.data[pixel + 3] = 255;
+        pending[index] = 0;
+        for (let dy = -1; dy <= 1; dy += 1) for (let dx = -1; dx <= 1; dx += 1) {
+          if (!dx && !dy) continue;
+          const nx = x + dx, ny = y + dy;
+          if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
+          const neighbour = ny * width + nx;
+          if (pending[neighbour] && !queued[neighbour]) { queued[neighbour] = 1; queue.push(neighbour); }
+        }
+      }
+
+      imageContext.putImageData(image, 0, 0);
+      clearMask();
+      return true;
+    }
+
+    function restoreTransparentWatermark() {
+      const image = imageContext.getImageData(0, 0, imageCanvas.width, imageCanvas.height);
+      const mask = readMaskAlpha();
+      const color = colorFromHex(watermarkColor.value);
+      const opacity = Number(watermarkOpacity.value) / 100;
+      let marked = 0;
+      for (let index = 0; index < mask.length; index += 1) {
+        if (mask[index] < 10) continue;
+        marked += 1;
+        const blend = Math.min(1, mask[index] / 148);
+        const pixel = index * 4;
+        for (let channel = 0; channel < 3; channel += 1) {
+          const recovered = Math.max(0, Math.min(255, (image.data[pixel + channel] - opacity * color[channel]) / Math.max(0.08, 1 - opacity)));
+          image.data[pixel + channel] = Math.round(image.data[pixel + channel] * (1 - blend) + recovered * blend);
+        }
+      }
+      if (!marked) return false;
+      imageContext.putImageData(image, 0, 0);
+      clearMask();
+      return true;
+    }
+
+    async function loadFile(file) {
+      if (!file) return;
+      const extensionOk = /\.(jpe?g|png|webp)$/i.test(file.name);
+      if (!file.type.startsWith("image/") && !extensionOk) { showToast("请选择 JPG、PNG 或 WebP 图片。"); return; }
+      if (file.size > 20 * 1024 * 1024) { showToast("图片超过 20 MB，请压缩后重试。"); return; }
+      setStatus("正在读取图片……");
+      try {
+        const bitmap = await createImageBitmap(file);
+        originalWidth = bitmap.width;
+        originalHeight = bitmap.height;
+        const scale = Math.min(1, MAX_SIDE / Math.max(bitmap.width, bitmap.height), Math.sqrt(MAX_PIXELS / (bitmap.width * bitmap.height)));
+        const width = Math.max(1, Math.round(bitmap.width * scale));
+        const height = Math.max(1, Math.round(bitmap.height * scale));
+        imageCanvas.width = maskCanvas.width = width;
+        imageCanvas.height = maskCanvas.height = height;
+        imageContext.clearRect(0, 0, width, height);
+        imageContext.drawImage(bitmap, 0, 0, width, height);
+        if (bitmap.close) bitmap.close();
+        clearMask();
+        originalImage = imageContext.getImageData(0, 0, width, height);
+        baseName = file.name.replace(/\.[^.]+$/, "") || "修复图片";
+        cloneSource = null;
+        updateClonePin();
+        history = [];
+        historyIndex = -1;
+        zoomSelect.value = width > 1600 ? "0.5" : width > 1050 ? "0.75" : "1";
+        applyZoom();
+        editor.hidden = false;
+        upload.classList.add("has-file");
+        fileMeta.textContent = `${file.name} · ${width}×${height}${scale < 1 ? `（原图 ${originalWidth}×${originalHeight}）` : ""}`;
+        setTool("brush");
+        if (scale < 1) setStatus(`为保证本地处理稳定，工作分辨率已调整为 ${width}×${height}。`);
+        commitHistory();
+        stageWrap.scrollTo({ left: 0, top: 0 });
+      } catch (error) {
+        console.error(error);
+        setStatus("图片读取失败，请更换文件后重试。");
+        showToast("无法读取这张图片。");
+      }
+    }
+
+    toolButtons.forEach((button) => button.addEventListener("click", () => setTool(button.dataset.wmTool)));
+    brushSize.addEventListener("input", () => { sizeLabel.textContent = brushSize.value; });
+    zoomSelect.addEventListener("change", applyZoom);
+    watermarkOpacity.addEventListener("input", () => { opacityLabel.textContent = `${watermarkOpacity.value}%`; });
+    fileInput.addEventListener("change", () => loadFile(fileInput.files[0]));
+    ["dragenter", "dragover"].forEach((eventName) => upload.addEventListener(eventName, (event) => { event.preventDefault(); upload.classList.add("is-dragging"); }));
+    ["dragleave", "drop"].forEach((eventName) => upload.addEventListener(eventName, (event) => { event.preventDefault(); upload.classList.remove("is-dragging"); }));
+    upload.addEventListener("drop", (event) => loadFile(event.dataTransfer.files[0]));
+
+    maskCanvas.addEventListener("contextmenu", (event) => event.preventDefault());
+    maskCanvas.addEventListener("pointerdown", (event) => {
+      if (!originalImage || busy || comparing) return;
+      const point = canvasPoint(event);
+      if (selectedTool === "clone" && (event.altKey || event.button === 2)) {
+        event.preventDefault();
+        cloneSource = point;
+        updateClonePin();
+        setStatus("取样点已设置。现在在水印区域涂抹；按住 Alt 点击可重新取样。");
+        showToast("仿制取样点已设置。");
+        return;
+      }
+      if (selectedTool === "clone" && !cloneSource) {
+        showToast("请先按住 Alt 点击干净区域设置取样点。");
+        return;
+      }
+      drawing = true;
+      changedDuringGesture = false;
+      startPoint = point;
+      previousPoint = point;
+      try { maskCanvas.setPointerCapture(event.pointerId); } catch (_) {}
+      if (selectedTool === "pan") {
+        panStart = { x: event.clientX, y: event.clientY, left: stageWrap.scrollLeft, top: stageWrap.scrollTop };
+      } else if (selectedTool === "rect") {
+        rectangleStartMask = maskContext.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
+      } else if (selectedTool === "clone") {
+        const source = imageContext.getImageData(0, 0, imageCanvas.width, imageCanvas.height);
+        const target = imageContext.createImageData(imageCanvas.width, imageCanvas.height);
+        target.data.set(source.data);
+        cloneWorkingImage = { source, target };
+        cloneOffset = { x: cloneSource.x - point.x, y: cloneSource.y - point.y };
+        cloneAt(point);
+        changedDuringGesture = true;
+      } else {
+        drawMaskLine(point, point, selectedTool === "eraser");
+        changedDuringGesture = true;
+      }
+    });
+
+    maskCanvas.addEventListener("pointermove", (event) => {
+      if (!drawing) return;
+      const point = canvasPoint(event);
+      if (selectedTool === "pan" && panStart) {
+        stageWrap.scrollLeft = panStart.left - (event.clientX - panStart.x);
+        stageWrap.scrollTop = panStart.top - (event.clientY - panStart.y);
+      } else if (selectedTool === "rect" && rectangleStartMask) {
+        maskContext.putImageData(rectangleStartMask, 0, 0);
+        maskContext.fillStyle = "rgba(224,61,82,.58)";
+        maskContext.fillRect(startPoint.x, startPoint.y, point.x - startPoint.x, point.y - startPoint.y);
+        changedDuringGesture = Math.abs(point.x - startPoint.x) > 2 || Math.abs(point.y - startPoint.y) > 2;
+      } else if (selectedTool === "clone") {
+        cloneLine(previousPoint, point);
+        changedDuringGesture = true;
+      } else {
+        drawMaskLine(previousPoint, point, selectedTool === "eraser");
+        changedDuringGesture = true;
+      }
+      previousPoint = point;
+    });
+
+    function finishGesture(event) {
+      if (!drawing) return;
+      drawing = false;
+      try { if (maskCanvas.hasPointerCapture(event.pointerId)) maskCanvas.releasePointerCapture(event.pointerId); } catch (_) {}
+      rectangleStartMask = null;
+      cloneWorkingImage = null;
+      cloneOffset = null;
+      panStart = null;
+      if (changedDuringGesture && selectedTool !== "pan") commitHistory();
+    }
+    maskCanvas.addEventListener("pointerup", finishGesture);
+    maskCanvas.addEventListener("pointercancel", finishGesture);
+
+    undoButton.addEventListener("click", () => {
+      if (historyIndex <= 0 || busy) return;
+      historyIndex -= 1;
+      restoreSnapshot(history[historyIndex]);
+      updateHistoryButtons();
+      setStatus("已撤销上一步操作。");
+    });
+    redoButton.addEventListener("click", () => {
+      if (historyIndex >= history.length - 1 || busy) return;
+      historyIndex += 1;
+      restoreSnapshot(history[historyIndex]);
+      updateHistoryButtons();
+      setStatus("已恢复下一步操作。");
+    });
+    clearMaskButton.addEventListener("click", () => {
+      if (!hasMask()) { showToast("当前没有标记区域。"); return; }
+      clearMask();
+      commitHistory();
+      setStatus("标记已清除，可以重新选择水印区域。");
+    });
+
+    repairButton.addEventListener("click", async () => {
+      if (!hasMask()) { showToast("请先涂抹或框选水印区域。"); return; }
+      setBusy(true);
+      setStatus("正在从周围纹理推算并填补标记区域……");
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      try {
+        if (repairMaskedArea()) {
+          commitHistory();
+          setStatus("快速修复完成。如有纹理错位，可用仿制画笔继续细调。");
+          showToast("标记区域已修复。");
+        }
+      } catch (error) {
+        console.error(error);
+        setStatus("本地修复失败，请缩小标记范围或更换图片后重试。");
+        showToast("修复失败。");
+      } finally {
+        setBusy(false);
+        updateHistoryButtons();
+      }
+    });
+
+    transparentButton.addEventListener("click", async () => {
+      if (!hasMask()) { showToast("请先标记半透明水印所在区域。"); return; }
+      setBusy(true);
+      setStatus("正在按所选颜色和不透明度反向还原……");
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+      try {
+        if (restoreTransparentWatermark()) {
+          commitHistory();
+          setStatus("透明水印还原完成。如颜色偏差明显，请撤销并调整颜色或不透明度。");
+          showToast("透明水印已还原。");
+        }
+      } finally {
+        setBusy(false);
+        updateHistoryButtons();
+      }
+    });
+
+    resetButton.addEventListener("click", () => {
+      if (!originalImage || busy) return;
+      imageContext.putImageData(originalImage, 0, 0);
+      clearMask();
+      cloneSource = null;
+      updateClonePin();
+      commitHistory();
+      setStatus("已恢复为刚上传的原图。");
+    });
+
+    function showOriginal() {
+      if (!originalImage || comparing || busy) return;
+      comparing = true;
+      compareImage = imageContext.getImageData(0, 0, imageCanvas.width, imageCanvas.height);
+      imageContext.putImageData(originalImage, 0, 0);
+      maskCanvas.style.visibility = "hidden";
+      compareButton.classList.add("is-active");
+      compareButton.textContent = "松开查看结果";
+    }
+    function showResult() {
+      if (!comparing) return;
+      imageContext.putImageData(compareImage, 0, 0);
+      compareImage = null;
+      comparing = false;
+      maskCanvas.style.visibility = "";
+      compareButton.classList.remove("is-active");
+      compareButton.textContent = "按住查看原图";
+    }
+    compareButton.addEventListener("pointerdown", (event) => { event.preventDefault(); try { compareButton.setPointerCapture(event.pointerId); } catch (_) {} showOriginal(); });
+    compareButton.addEventListener("pointerup", showResult);
+    compareButton.addEventListener("pointercancel", showResult);
+    compareButton.addEventListener("lostpointercapture", showResult);
+
+    downloadButton.addEventListener("click", () => {
+      if (!originalImage || busy) return;
+      const format = exportType.value === "jpeg" ? "image/jpeg" : "image/png";
+      imageCanvas.toBlob((blob) => {
+        if (!blob) { showToast("图片导出失败。"); return; }
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `${baseName}-去水印.${format === "image/jpeg" ? "jpg" : "png"}`;
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(link.href), 1200);
+        showToast("处理后的图片已下载。");
+      }, format, format === "image/jpeg" ? 0.94 : undefined);
     });
   }
 
