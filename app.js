@@ -52,6 +52,7 @@
       scan: '<path d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4M8 12h8M12 8v8"/>',
       image: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m5 18 5-5 3 3 2-2 4 4M7 2v4M17 2v4"/>',
       eraser: '<path d="m4.5 15.5 8.8-10a2.4 2.4 0 0 1 3.4-.2l2 1.8a2.4 2.4 0 0 1 .2 3.4l-8.8 10H6.8l-2.3-2a2 2 0 0 1 0-3Z"/><path d="m10 20.5 6.2-7.1M9.2 10.2l5 4.4M3 21h18"/>',
+      printer: '<path d="M7 8V3h10v5M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M7 14h10v7H7z"/><path d="M17 11h.01"/>',
       search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',
       arrow: '<path d="M5 12h14M14 7l5 5-5 5"/>'
     };
@@ -260,6 +261,7 @@
         <a class="tool-nav-button ${active === "converter" ? "is-active" : ""}" href="#/tools/converter">${icon("file")} 文档转换</a>
         <a class="tool-nav-button ${active === "ocr" ? "is-active" : ""}" href="#/tools/ocr">${icon("image")} 文字提取</a>
         <a class="tool-nav-button ${active === "watermark" ? "is-active" : ""}" href="#/tools/watermark">${icon("eraser")} 图片去水印</a>
+        <a class="tool-nav-button ${active === "print-fix" ? "is-active" : ""}" href="#/tools/print-fix">${icon("printer")} 黑白照片打印修正</a>
         <a class="tool-nav-button ${active === "ai-check" ? "is-active" : ""}" href="#/tools/ai-check">${icon("scan")} AI 写作特征</a>
         <div class="sidebar-note">文档、图片和文本默认在当前浏览器中处理，不会主动上传你的内容。</div>
       </aside>`;
@@ -267,7 +269,7 @@
 
   function renderToolsOverview() {
     app.innerHTML = `
-      ${pageHero("浏览器端工具", "处理文档，", "修复图片与文字。", "四项工具都优先在本地浏览器中运行：转换常见文本格式、提取图片文字、局部修复图片，以及进行透明、可解释的写作特征分析。")}
+      ${pageHero("浏览器端工具", "处理文档，", "修复图片与文字。", "五项工具都优先在本地浏览器中运行：转换常见文本格式、提取图片文字、局部修复图片、优化黑白打印，以及进行透明、可解释的写作特征分析。")}
       <section class="section">
         <div class="page-shell">
           <div class="section-heading"><div><span class="section-kicker">选择工具</span><h2>现在要处理什么？</h2><p>不需要账号。打开工具、放入内容、查看结果，需要时再下载。</p></div></div>
@@ -275,6 +277,7 @@
             <a class="tool-choice" href="#/tools/converter"><span class="skill-icon tone-blue">${icon("file")}</span><div><h3>文档转换工具</h3><p>在 TXT、Markdown、HTML、JSON 和 CSV 之间转换，文件默认留在本机。</p></div><b>→</b></a>
             <a class="tool-choice" href="#/tools/ocr"><span class="skill-icon tone-green">${icon("image")}</span><div><h3>图片文字提取</h3><p>上传图片，在浏览器中识别简体中文和英文，并复制或下载结果。</p></div><b>→</b></a>
             <a class="tool-choice" href="#/tools/watermark"><span class="skill-icon tone-blue">${icon("eraser")}</span><div><h3>图片去水印</h3><p>涂抹或框选水印区域，在浏览器本地修复，并可用仿制工具细调。</p></div><b>→</b></a>
+            <a class="tool-choice" href="#/tools/print-fix"><span class="skill-icon tone-violet">${icon("printer")}</span><div><h3>黑白照片打印修正</h3><p>分区域修正长图中的文字、反白内容与截图，合成一张清晰的A4打印图片。</p></div><b>→</b></a>
             <a class="tool-choice" href="#/tools/ai-check"><span class="skill-icon tone-coral">${icon("scan")}</span><div><h3>AI 写作特征分析</h3><p>从句长、重复、连接词和模板表达等角度检查文章的模式化程度。</p></div><b>→</b></a>
           </div>
         </div>
@@ -429,6 +432,103 @@
     bindWatermark();
   }
 
+  function renderPrintFix() {
+    app.innerHTML = `
+      ${pageHero("工具 · 黑白打印", "让图中的小字，", "在纸上保持清楚。", "采用保真优先的连续灰度转换：不扩张笔画、不自动补线、不重绘文字，只把完整的大面积深色底转成浅底深字。")}
+      <section class="section">
+        <div class="page-shell tool-workspace">
+          ${toolNav("print-fix")}
+          <div class="workspace-card print-fix-workspace">
+            <div class="workspace-heading pp-heading"><div><h2>黑白照片打印修正</h2><p>适合长图文、宣传页、手机截图与说明图。保留原始笔画、线宽、边框和灰度层次，不裁切、不拼接。</p></div><span class="local-badge">● 本地处理</span></div>
+            <label class="pp-upload" id="pp-upload">
+              <input id="pp-file-input" type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp">
+              <span class="pp-upload-icon">${icon("printer")}</span>
+              <span><b>选择图片或拖到这里</b>JPG · PNG · WebP，建议使用原始大图</span>
+            </label>
+            <div class="pp-editor" id="pp-editor" hidden>
+              <section class="pp-page-settings">
+                <div class="pp-setting-head"><div><span class="section-kicker">01 · 纸张与质量</span><h3>先确定要打印到哪里</h3></div><b id="pp-recommend-badge">等待图片</b></div>
+                <div class="pp-settings pp-settings-v2">
+                  <label><span>纸张</span><select class="select" id="pp-paper"><option value="a4" selected>A4 · 210×297 mm</option><option value="a5">A5 · 148×210 mm</option><option value="b5">B5 · 176×250 mm</option><option value="letter">Letter · 215.9×279.4 mm</option><option value="custom">自定义纸张</option></select></label>
+                  <label><span>方向</span><select class="select" id="pp-orientation"><option value="portrait" selected>纵向</option><option value="landscape">横向</option></select></label>
+                  <label><span>页边距</span><select class="select" id="pp-margin"><option value="10" selected>标准 · 10 mm</option><option value="5">窄 · 5 mm</option><option value="custom">自定义</option></select></label>
+                  <label><span>图片尺寸</span><select class="select" id="pp-fit-mode"><option value="recommended" selected>自动推荐，不裁切</option><option value="custom">自定义宽度</option></select></label>
+                  <label><span>纸上位置</span><select class="select" id="pp-position"><option value="top" selected>顶部居中</option><option value="center">页面居中</option><option value="bottom">底部居中</option></select></label>
+                  <label><span>输出精度</span><select class="select" id="pp-dpi"><option value="600">600 DPI</option><option value="1200" selected>1200 DPI · 最清晰</option></select></label>
+                  <label class="pp-range"><span>黑白对比 <b id="pp-threshold-label">168</b></span><input id="pp-threshold" type="range" min="110" max="220" value="168"></label>
+                </div>
+                <div class="pp-custom-settings" id="pp-custom-settings" hidden>
+                  <label id="pp-custom-paper-fields" hidden><span>自定义纸张</span><span class="pp-inline-fields"><input class="select" id="pp-custom-paper-width" type="number" min="60" max="500" step="0.1" value="210"><i>×</i><input class="select" id="pp-custom-paper-height" type="number" min="60" max="500" step="0.1" value="297"><i>mm</i></span></label>
+                  <label id="pp-custom-margin-field" hidden><span>自定义边距</span><span class="pp-inline-fields"><input class="select" id="pp-custom-margin" type="number" min="0" max="40" step="0.5" value="10"><i>mm</i></span></label>
+                  <label id="pp-custom-width-field" hidden><span>图片宽度</span><span class="pp-inline-fields"><input class="select" id="pp-custom-width" type="number" min="10" max="500" step="0.1" value="95"><i>mm</i></span></label>
+                </div>
+              </section>
+              <div class="pp-smart-strip"><span><b>保真打印模式</b><small id="pp-smart-summary">正在等待图片。默认只改变颜色，不改变文字和图形的形状、粗细或位置。</small></span><button class="button compact" id="pp-auto-detect" type="button">恢复保真最佳结果</button></div>
+              <div class="pp-edit-toolbar">
+                <div class="pp-selection-status"><span>当前操作</span><b id="pp-selection-label">未选中区域 · 点击处理方式可设置新框</b></div>
+                <div class="pp-mode-buttons" id="pp-mode-buttons" aria-label="区域处理方式">
+                  <button type="button" data-pp-mode="binary">强化黑白</button>
+                  <button type="button" data-pp-mode="reverse" class="is-active">深色底转正</button>
+                  <button type="button" data-pp-mode="gray">保留灰度</button>
+                  <button type="button" data-pp-mode="original">保持原图</button>
+                </div>
+                <div class="pp-history-actions"><button class="button ghost compact" id="pp-undo" type="button" disabled>撤销</button><button class="button ghost compact" id="pp-redo" type="button" disabled>重做</button><button class="button ghost compact" id="pp-remove-selected" type="button" disabled>删除选区</button></div>
+              </div>
+              <div class="pp-main">
+                <section class="pp-preview-card">
+                  <div class="pp-toolbar">
+                    <div><strong>02 · 处理预览</strong><span id="pp-preview-meta">等待图片</span></div>
+                    <div class="pp-toolbar-actions">
+                      <label><span>预览缩放</span><select class="select" id="pp-zoom"><option value="fit" selected>适合窗口</option><option value="0.75">75%</option><option value="1">100%</option><option value="1.5">150%</option></select></label>
+                      <button class="button ghost compact" id="pp-compare" type="button">按住查看原图</button>
+                    </div>
+                  </div>
+                  <div class="pp-stage-wrap" id="pp-stage-wrap">
+                    <div class="pp-stage" id="pp-stage">
+                      <canvas id="pp-preview-canvas" aria-label="黑白打印处理预览"></canvas>
+                      <canvas id="pp-region-canvas" aria-label="打印修正区域选择层"></canvas>
+                    </div>
+                  </div>
+                  <div class="pp-preview-foot"><span>默认结果不会自动加粗、补线或锐化。需要改变局部效果时可拖动框选；方框只负责定位，不会写进输出图片。</span></div>
+                </section>
+                <aside class="pp-side">
+                  <section class="pp-panel pp-paper-panel">
+                    <div class="pp-paper-card" id="pp-paper-card"><div class="pp-paper-sheet" id="pp-paper-sheet"><div class="pp-paper-safe" id="pp-paper-safe"></div><div class="pp-paper-image" id="pp-paper-image"><span>图片</span></div></div></div>
+                    <p class="pp-paper-caption" id="pp-paper-caption">纸张预览会显示在这里。</p>
+                  </section>
+                  <section class="pp-panel">
+                    <span class="section-kicker">03 · 打印检查</span>
+                    <div class="pp-stats"><div><span>原图</span><b id="pp-source-size">—</b></div><div><span>输出</span><b id="pp-output-size">—</b></div><div><span>纸上尺寸</span><b id="pp-paper-size">—</b></div><div><span>手动区域</span><b id="pp-region-count">0</b></div></div>
+                    <p class="pp-quality" id="pp-quality">上传图片后会检查像素、纸张尺寸、深色底区域、连续性和内存占用。</p>
+                  </section>
+                  <section class="pp-panel pp-region-panel">
+                     <div class="pp-panel-head"><div><span class="section-kicker">可选细调</span><h3>只在确有需要时框选</h3></div></div>
+                    <div class="pp-region-list" id="pp-region-list"><p>尚未添加区域。</p></div>
+                  </section>
+                  <section class="pp-panel pp-export-panel">
+                    <span class="section-kicker">04 · 生成结果</span>
+                    <h3>合成为一张图片</h3>
+                    <p>保存前会重新解码验证PNG；打印会先显示检查结果，再打开系统打印窗口。</p>
+                    <div class="pp-progress" id="pp-progress"><i style="--progress:0%"></i><span id="pp-progress-text">准备就绪</span></div>
+                    <button class="button primary wide" id="pp-download" type="button">保存兼容PNG</button>
+                    <button class="button wide" id="pp-print" type="button">A4单页打印</button>
+                  </section>
+                </aside>
+              </div>
+            </div>
+            <div class="pp-notice"><b>说明：</b>兼容PNG完全使用浏览器原生编码。保真模式按原图像素连续转换，不扩张或重绘任何笔画；不会用OCR重排文字，也不会裁切或重新拼接内容。</div>
+            <dialog class="pp-print-dialog" id="pp-print-dialog">
+              <div class="pp-dialog-head"><div><span class="section-kicker">打印前检查</span><h2 id="pp-dialog-title">确认打印设置</h2></div><button type="button" id="pp-dialog-close" aria-label="关闭">×</button></div>
+              <div class="pp-dialog-summary" id="pp-dialog-summary"></div>
+              <div class="pp-dialog-advice"><b>进入系统窗口后：</b><span>纸张与网页保持一致；每张纸1页；关闭二次缩放、墨粉节省和页眉页脚；质量选择“最佳”或“最高”。</span></div>
+              <div class="pp-dialog-actions"><button class="button ghost" id="pp-dialog-cancel" type="button">返回修改</button><button class="button primary" id="pp-dialog-confirm" type="button">生成并打开系统打印</button></div>
+            </dialog>
+          </div>
+        </div>
+      </section>`;
+    bindPrintFix();
+  }
+
   function renderAIChecker() {
     app.innerHTML = `
       ${pageHero("工具 · 写作分析", "看见文字中的", "AI 写作特征。", "从八组可解释指标、文本类型和样本长度综合判断，给出风险区间与段落线索，而不是伪装成确定的 AI 来源证明。")}
@@ -468,6 +568,7 @@
     if (path === "/tools/converter") renderConverter();
     else if (path === "/tools/ocr") renderOCR();
     else if (path === "/tools/watermark") renderWatermark();
+    else if (path === "/tools/print-fix") renderPrintFix();
     else if (path === "/tools/ai-check") renderAIChecker();
     else renderToolsOverview();
   }
@@ -1435,6 +1536,955 @@
         showToast("处理后的图片已下载。");
       }, format, format === "image/jpeg" ? 0.94 : undefined);
     });
+  }
+
+  function bindPrintFix() {
+    const PAPERS = {
+      a4: { name: "A4", width: 210, height: 297 },
+      a5: { name: "A5", width: 148, height: 210 },
+      b5: { name: "B5", width: 176, height: 250 },
+      letter: { name: "Letter", width: 215.9, height: 279.4 }
+    };
+    const MODE_NAMES = { binary: "强化黑白", reverse: "深色底转正", gray: "保留灰度", original: "保持原图" };
+    const MODE_COLORS = { binary: "#278dd1", reverse: "#e65e5e", gray: "#6d61df", original: "#17a767" };
+    const fileInput = document.getElementById("pp-file-input");
+    const upload = document.getElementById("pp-upload");
+    const editor = document.getElementById("pp-editor");
+    const paperSelect = document.getElementById("pp-paper");
+    const orientationSelect = document.getElementById("pp-orientation");
+    const marginSelect = document.getElementById("pp-margin");
+    const fitModeSelect = document.getElementById("pp-fit-mode");
+    const positionSelect = document.getElementById("pp-position");
+    const dpiSelect = document.getElementById("pp-dpi");
+    const thresholdInput = document.getElementById("pp-threshold");
+    const thresholdLabel = document.getElementById("pp-threshold-label");
+    const customSettings = document.getElementById("pp-custom-settings");
+    const customPaperFields = document.getElementById("pp-custom-paper-fields");
+    const customMarginField = document.getElementById("pp-custom-margin-field");
+    const customWidthField = document.getElementById("pp-custom-width-field");
+    const customPaperWidth = document.getElementById("pp-custom-paper-width");
+    const customPaperHeight = document.getElementById("pp-custom-paper-height");
+    const customMargin = document.getElementById("pp-custom-margin");
+    const customWidth = document.getElementById("pp-custom-width");
+    const recommendBadge = document.getElementById("pp-recommend-badge");
+    const smartSummary = document.getElementById("pp-smart-summary");
+    const smartButton = document.getElementById("pp-auto-detect");
+    const selectionLabel = document.getElementById("pp-selection-label");
+    const modeButtons = Array.from(document.querySelectorAll("[data-pp-mode]"));
+    const undoButton = document.getElementById("pp-undo");
+    const redoButton = document.getElementById("pp-redo");
+    const removeSelectedButton = document.getElementById("pp-remove-selected");
+    const zoomSelect = document.getElementById("pp-zoom");
+    const compareButton = document.getElementById("pp-compare");
+    const sourceSize = document.getElementById("pp-source-size");
+    const outputSize = document.getElementById("pp-output-size");
+    const printedSize = document.getElementById("pp-paper-size");
+    const regionCount = document.getElementById("pp-region-count");
+    const quality = document.getElementById("pp-quality");
+    const previewMeta = document.getElementById("pp-preview-meta");
+    const regionList = document.getElementById("pp-region-list");
+    const progress = document.getElementById("pp-progress");
+    const progressText = document.getElementById("pp-progress-text");
+    const downloadButton = document.getElementById("pp-download");
+    const printButton = document.getElementById("pp-print");
+    const paperSheet = document.getElementById("pp-paper-sheet");
+    const paperSafe = document.getElementById("pp-paper-safe");
+    const paperImage = document.getElementById("pp-paper-image");
+    const paperCaption = document.getElementById("pp-paper-caption");
+    const printDialog = document.getElementById("pp-print-dialog");
+    const dialogTitle = document.getElementById("pp-dialog-title");
+    const dialogSummary = document.getElementById("pp-dialog-summary");
+    const dialogClose = document.getElementById("pp-dialog-close");
+    const dialogCancel = document.getElementById("pp-dialog-cancel");
+    const dialogConfirm = document.getElementById("pp-dialog-confirm");
+    const stage = document.getElementById("pp-stage");
+    const previewCanvas = document.getElementById("pp-preview-canvas");
+    const regionCanvas = document.getElementById("pp-region-canvas");
+    const previewContext = previewCanvas.getContext("2d", { willReadFrequently: true });
+    const regionContext = regionCanvas.getContext("2d");
+    const previewSource = document.createElement("canvas");
+    const previewSourceContext = previewSource.getContext("2d", { willReadFrequently: true });
+    let sourceImage = null;
+    let sourceUrl = "";
+    let sourceName = "打印图片";
+    let sourceVersion = 0;
+    let regions = [];
+    let selectedId = null;
+    let drawingMode = "reverse";
+    let nextRegionId = 1;
+    let interaction = null;
+    let draftRegion = null;
+    let previewFrame = 0;
+    let comparing = false;
+    let busy = false;
+    let cachedOutput = null;
+    let cachedSignature = "";
+    let toneGuide = null;
+    let toneGuideVersion = 0;
+    let continuityStatus = "等待连续性检查。";
+    let structureStatus = "等待文字与线条检查。";
+    let undoHistory = [];
+    let redoHistory = [];
+
+    function clamp(value, min, max) { return Math.min(max, Math.max(min, value)); }
+    function nextFrame() { return new Promise((resolve) => requestAnimationFrame(resolve)); }
+    function cloneRegions(items = regions) { return items.map((region) => ({ ...region })); }
+    function snapshot() { return { regions: cloneRegions(), selectedId, drawingMode }; }
+
+    function setProgress(value, message) {
+      const amount = clamp(Math.round(value), 0, 100);
+      progress.querySelector("i").style.setProperty("--progress", `${amount}%`);
+      progressText.textContent = message;
+    }
+
+    function setBusy(value) {
+      busy = value;
+      [fileInput, paperSelect, orientationSelect, marginSelect, fitModeSelect, positionSelect, dpiSelect, thresholdInput, customPaperWidth, customPaperHeight, customMargin, customWidth, smartButton, undoButton, redoButton, removeSelectedButton, downloadButton, printButton].forEach((control) => { if (control) control.disabled = value; });
+      modeButtons.forEach((button) => { button.disabled = value; });
+      regionCanvas.style.pointerEvents = value ? "none" : "";
+      if (!value) updateHistoryButtons();
+    }
+
+    function pushHistory() {
+      undoHistory.push(snapshot());
+      if (undoHistory.length > 30) undoHistory.shift();
+      redoHistory = [];
+      updateHistoryButtons();
+    }
+
+    function restoreSnapshot(state) {
+      regions = cloneRegions(state.regions);
+      selectedId = state.selectedId;
+      drawingMode = state.drawingMode;
+      renderRegionList();
+      updateSelectionUI();
+      schedulePreview();
+    }
+
+    function updateHistoryButtons() {
+      undoButton.disabled = busy || undoHistory.length === 0;
+      redoButton.disabled = busy || redoHistory.length === 0;
+      removeSelectedButton.disabled = busy || selectedId === null;
+    }
+
+    function pageDefinition() {
+      let base;
+      if (paperSelect.value === "custom") {
+        base = { name: "自定义", width: clamp(Number(customPaperWidth.value) || 210, 60, 500), height: clamp(Number(customPaperHeight.value) || 297, 60, 500) };
+      } else base = { ...PAPERS[paperSelect.value] };
+      const wantsLandscape = orientationSelect.value === "landscape";
+      let pageWidth = base.width;
+      let pageHeight = base.height;
+      if ((wantsLandscape && pageWidth < pageHeight) || (!wantsLandscape && pageWidth > pageHeight)) [pageWidth, pageHeight] = [pageHeight, pageWidth];
+      const margin = marginSelect.value === "custom" ? clamp(Number(customMargin.value) || 0, 0, Math.min(pageWidth, pageHeight) / 3) : Number(marginSelect.value);
+      return { name: base.name, pageWidth, pageHeight, margin, orientation: wantsLandscape ? "横向" : "纵向" };
+    }
+
+    function outputGeometry() {
+      if (!sourceImage) return null;
+      const page = pageDefinition();
+      const ratio = sourceImage.naturalHeight / sourceImage.naturalWidth;
+      const printableWidth = Math.max(1, page.pageWidth - page.margin * 2);
+      const printableHeight = Math.max(1, page.pageHeight - page.margin * 2);
+      const safeWidth = Math.max(1, printableWidth - 2);
+      const safeHeight = Math.max(1, printableHeight - 2);
+      const recommendedWidth = Math.min(safeWidth, safeHeight / ratio);
+      const requestedWidth = fitModeSelect.value === "custom" ? clamp(Number(customWidth.value) || recommendedWidth, 10, safeWidth) : recommendedWidth;
+      const imageWidth = Math.min(requestedWidth, safeWidth, safeHeight / ratio);
+      const imageHeight = imageWidth * ratio;
+      const dpi = Number(dpiSelect.value);
+      const pixelWidth = Math.max(1, Math.round(imageWidth * dpi / 25.4));
+      const pixelHeight = Math.max(1, Math.round(imageHeight * dpi / 25.4));
+      const sourceDpi = Math.round(sourceImage.naturalWidth / (imageWidth / 25.4));
+      const memoryMb = pixelWidth * pixelHeight * 4 * 1.2 / 1024 / 1024;
+      const left = (page.pageWidth - imageWidth) / 2;
+      let top = page.margin + 1;
+      if (positionSelect.value === "center") top = (page.pageHeight - imageHeight) / 2;
+      if (positionSelect.value === "bottom") top = page.pageHeight - page.margin - 1 - imageHeight;
+      top = clamp(top, page.margin, page.pageHeight - page.margin - imageHeight);
+      return { ...page, ratio, printableWidth, printableHeight, recommendedWidth, imageWidth, imageHeight, dpi, pixelWidth, pixelHeight, sourceDpi, memoryMb, left, top };
+    }
+
+    function settingsSignature() {
+      const geometry = outputGeometry();
+      return JSON.stringify({ sourceVersion, toneGuideVersion, threshold: thresholdInput.value, regions, geometry });
+    }
+
+    function invalidateOutput() {
+      cachedOutput = null;
+      cachedSignature = "";
+      setProgress(0, "设置已更新，等待生成");
+    }
+
+    function updateCustomSettings() {
+      const showPaper = paperSelect.value === "custom";
+      const showMargin = marginSelect.value === "custom";
+      const showWidth = fitModeSelect.value === "custom";
+      customPaperFields.hidden = !showPaper;
+      customMarginField.hidden = !showMargin;
+      customWidthField.hidden = !showWidth;
+      customSettings.hidden = !(showPaper || showMargin || showWidth);
+    }
+
+    function updatePaperPreview() {
+      const geometry = outputGeometry();
+      if (!geometry) return;
+      paperSheet.style.aspectRatio = `${geometry.pageWidth} / ${geometry.pageHeight}`;
+      paperSafe.style.left = `${geometry.margin / geometry.pageWidth * 100}%`;
+      paperSafe.style.top = `${geometry.margin / geometry.pageHeight * 100}%`;
+      paperSafe.style.width = `${geometry.printableWidth / geometry.pageWidth * 100}%`;
+      paperSafe.style.height = `${geometry.printableHeight / geometry.pageHeight * 100}%`;
+      paperImage.style.left = `${geometry.left / geometry.pageWidth * 100}%`;
+      paperImage.style.top = `${geometry.top / geometry.pageHeight * 100}%`;
+      paperImage.style.width = `${geometry.imageWidth / geometry.pageWidth * 100}%`;
+      paperImage.style.height = `${geometry.imageHeight / geometry.pageHeight * 100}%`;
+      paperCaption.textContent = `${geometry.name}${geometry.orientation} · 图片 ${geometry.imageWidth.toFixed(1)}×${geometry.imageHeight.toFixed(1)} mm · ${positionSelect.options[positionSelect.selectedIndex].text}`;
+      printButton.textContent = `${geometry.name}单页打印`;
+    }
+
+    function updateStats() {
+      const geometry = outputGeometry();
+      if (!geometry) return;
+      sourceSize.textContent = `${sourceImage.naturalWidth} × ${sourceImage.naturalHeight}px`;
+      outputSize.textContent = `${geometry.pixelWidth} × ${geometry.pixelHeight}px`;
+      printedSize.textContent = `${geometry.imageWidth.toFixed(1)} × ${geometry.imageHeight.toFixed(1)}mm`;
+      regionCount.textContent = String(regions.length);
+      recommendBadge.textContent = `推荐 ${geometry.imageWidth.toFixed(1)}×${geometry.imageHeight.toFixed(1)} mm`;
+      const notes = [];
+      if (fitModeSelect.value === "custom" && Number(customWidth.value) > geometry.imageWidth + 0.1) notes.push("自定义宽度超过可打印区域，已自动缩小且不裁切。");
+      if (sourceImage.naturalWidth < geometry.pixelWidth) notes.push("输出会放大原图像素，不会创造原图中不存在的细节。");
+      else notes.push(`原图在当前纸面尺寸下约 ${geometry.sourceDpi} DPI。`);
+      if (geometry.memoryMb > 360) notes.push(`预计占用约 ${Math.round(geometry.memoryMb)} MB内存，建议改用600 DPI。`);
+      else notes.push(`预计生成内存约 ${Math.round(geometry.memoryMb)} MB。`);
+      notes.push(structureStatus);
+      notes.push(continuityStatus);
+      quality.textContent = notes.join(" ");
+      previewMeta.textContent = `${sourceName} · ${previewSource.width} × ${previewSource.height}px预览`;
+      updatePaperPreview();
+    }
+
+    function smoothStep(edge0, edge1, value) {
+      const amount = clamp((value - edge0) / Math.max(0.0001, edge1 - edge0), 0, 1);
+      return amount * amount * (3 - 2 * amount);
+    }
+
+    function integralRect(integral, stride, left, top, right, bottom) {
+      return integral[bottom * stride + right] - integral[top * stride + right] - integral[bottom * stride + left] + integral[top * stride + left];
+    }
+
+    function buildToneGuide() {
+      if (!sourceImage) return;
+      const sourceWidth = sourceImage.naturalWidth;
+      const sourceHeight = sourceImage.naturalHeight;
+      const scale = Math.min(1, 1200 / sourceWidth, 3600 / sourceHeight, Math.sqrt(3200000 / (sourceWidth * sourceHeight)));
+      const width = Math.max(1, Math.round(sourceWidth * scale));
+      const height = Math.max(1, Math.round(sourceHeight * scale));
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+      context.fillStyle = "#fff";
+      context.fillRect(0, 0, width, height);
+      context.drawImage(sourceImage, 0, 0, width, height);
+      const pixels = context.getImageData(0, 0, width, height).data;
+      const sourceLuminance = new Uint8Array(width * height);
+      const panelSeed = new Uint8Array(width * height);
+      for (let y = 0; y < height; y += 1) {
+        for (let x = 0; x < width; x += 1) {
+          const offset = (y * width + x) * 4;
+          const alpha = pixels[offset + 3] / 255;
+          const red = pixels[offset] * alpha + 255 * (1 - alpha);
+          const green = pixels[offset + 1] * alpha + 255 * (1 - alpha);
+          const blue = pixels[offset + 2] * alpha + 255 * (1 - alpha);
+          const luminance = Math.round(0.2126 * red + 0.7152 * green + 0.0722 * blue);
+          const channelMax = Math.max(red, green, blue);
+          const channelMin = Math.min(red, green, blue);
+          const chroma = channelMax - channelMin;
+          const pixelIndex = y * width + x;
+          sourceLuminance[pixelIndex] = luminance;
+          panelSeed[pixelIndex] = ((chroma > 30 && luminance < 224) || luminance < 148) ? 1 : 0;
+        }
+      }
+
+      const polarity = new Uint8Array(width * height);
+      const background = new Uint8Array(width * height);
+      background.fill(96);
+
+      let darkContextPixels = 0;
+      let panelCount = 0;
+      const rowCount = new Uint32Array(height);
+      const rowLuminance = new Float64Array(height);
+      const rowMin = new Int32Array(height);
+      const rowMax = new Int32Array(height);
+      rowMin.fill(width);
+      rowMax.fill(-1);
+      for (let y = 0; y < height; y += 1) {
+        const rowOffset = y * width;
+        for (let x = 0; x < width; x += 1) {
+          const index = rowOffset + x;
+          if (!panelSeed[index]) continue;
+          rowCount[y] += 1;
+          rowLuminance[y] += sourceLuminance[index];
+          rowMin[y] = Math.min(rowMin[y], x);
+          rowMax[y] = Math.max(rowMax[y], x);
+        }
+      }
+      const minBandHeight = Math.max(8, Math.round(height * 0.008));
+      const qualifyingRow = (y) => rowCount[y] >= width * 0.32 && rowMax[y] - rowMin[y] + 1 >= width * 0.6;
+      function commitBand(top, bottom) {
+        if (top < 0 || bottom - top < minBandHeight) return;
+        let minX = width;
+        let maxX = -1;
+        let luminanceSum = 0;
+        let sampleCount = 0;
+        for (let y = top; y < bottom; y += 1) {
+          if (!qualifyingRow(y)) continue;
+          minX = Math.min(minX, rowMin[y]);
+          maxX = Math.max(maxX, rowMax[y]);
+          luminanceSum += rowLuminance[y];
+          sampleCount += rowCount[y];
+        }
+        if (maxX < minX || maxX - minX + 1 < width * 0.6) return;
+        const panelBackground = clamp(Math.round(luminanceSum / Math.max(1, sampleCount)), 28, 198);
+        panelCount += 1;
+        for (let y = top; y < bottom; y += 1) {
+          const rowOffset = y * width;
+          const rowBackground = rowCount[y] ? clamp(Math.round(rowLuminance[y] / rowCount[y]), 28, 198) : panelBackground;
+          for (let x = minX; x <= maxX; x += 1) {
+            const index = rowOffset + x;
+            polarity[index] = 255;
+            background[index] = rowBackground;
+            darkContextPixels += 1;
+          }
+        }
+      }
+      let bandStart = -1;
+      for (let y = 0; y <= height; y += 1) {
+        if (y < height && qualifyingRow(y)) {
+          if (bandStart < 0) bandStart = y;
+        } else if (bandStart >= 0) {
+          commitBand(bandStart, y);
+          bandStart = -1;
+        }
+      }
+      toneGuide = { width, height, polarity, background, xCache: new Map() };
+      toneGuideVersion += 1;
+      const darkPercent = Math.round(darkContextPixels / Math.max(1, width * height) * 100);
+      smartSummary.textContent = `保真模式已启用；仅识别到${panelCount}个完整深色底区域（约${darkPercent}%），其余内容只做连续灰度转换。`;
+      structureStatus = "保真保护：未加粗文字、未补线、未锐化；边框、截图和二维码按原像素保留。";
+      continuityStatus = "连续性检查：整图同画布逐像素处理，没有自动结构重绘。";
+    }
+
+    function guideXMap(width) {
+      if (!toneGuide) return null;
+      if (toneGuide.xCache.has(width)) return toneGuide.xCache.get(width);
+      const left = new Uint16Array(width);
+      const right = new Uint16Array(width);
+      const weight = new Float32Array(width);
+      for (let x = 0; x < width; x += 1) {
+        const coordinate = (x + 0.5) * toneGuide.width / width - 0.5;
+        const low = clamp(Math.floor(coordinate), 0, toneGuide.width - 1);
+        left[x] = low;
+        right[x] = Math.min(toneGuide.width - 1, low + 1);
+        weight[x] = clamp(coordinate - Math.floor(coordinate), 0, 1);
+      }
+      const map = { left, right, weight };
+      toneGuide.xCache.set(width, map);
+      return map;
+    }
+
+    function pixelRegions(width, height) {
+      return regions.map((region) => {
+        const left = clamp(Math.floor(region.x * width), 0, width - 1);
+        const top = clamp(Math.floor(region.y * height), 0, height - 1);
+        const right = clamp(Math.ceil((region.x + region.width) * width), 1, width);
+        const bottom = clamp(Math.ceil((region.y + region.height) * height), 1, height);
+        return {
+          id: region.id,
+          mode: region.mode,
+          left, top, right, bottom,
+          feather: clamp(Math.round(Math.min(right - left, bottom - top) * 0.12), 8, 56)
+        };
+      });
+    }
+
+    function processPixels(imageData, width, height, mappedRegions, threshold, yOffset = 0, totalHeight = height) {
+      const data = imageData.data;
+      const xMap = guideXMap(width);
+      const contrastControl = (threshold - 168) / 58;
+      const blackPoint = clamp(10 + contrastControl * 4, 5, 18);
+      const whitePoint = clamp(253 - contrastControl * 4, 247, 255);
+      const grayGamma = clamp(1.02 + contrastControl * 0.08, 0.94, 1.12);
+      function faithfulGray(luminance, chroma, useColorInk = true) {
+        const normalized = clamp((luminance - blackPoint) / Math.max(1, whitePoint - blackPoint), 0, 1);
+        const base = Math.pow(normalized, grayGamma) * 255;
+        if (!useColorInk) return base;
+        const saturationWeight = smoothStep(24, 92, chroma) * (1 - smoothStep(174, 246, luminance));
+        return base * (1 - saturationWeight * 0.46);
+      }
+      for (let row = 0; row < height; row += 1) {
+        const globalY = row + yOffset;
+        const active = mappedRegions.filter((region) => globalY >= region.top && globalY < region.bottom);
+        const guideCoordinateY = toneGuide ? (globalY + 0.5) * toneGuide.height / totalHeight - 0.5 : 0;
+        const guideTop = toneGuide ? clamp(Math.floor(guideCoordinateY), 0, toneGuide.height - 1) : 0;
+        const guideBottom = toneGuide ? Math.min(toneGuide.height - 1, guideTop + 1) : 0;
+        const guideYWeight = toneGuide ? clamp(guideCoordinateY - Math.floor(guideCoordinateY), 0, 1) : 0;
+        for (let column = 0; column < width; column += 1) {
+          const offset = (row * width + column) * 4;
+          const alpha = data[offset + 3] / 255;
+          const red = Math.round(data[offset] * alpha + 255 * (1 - alpha));
+          const green = Math.round(data[offset + 1] * alpha + 255 * (1 - alpha));
+          const blue = Math.round(data[offset + 2] * alpha + 255 * (1 - alpha));
+          const luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+          const chroma = Math.max(red, green, blue) - Math.min(red, green, blue);
+          let darkWeight = 0;
+          let darkBackground = 88;
+          if (toneGuide && xMap) {
+            const left = xMap.left[column];
+            const right = xMap.right[column];
+            const xWeight = xMap.weight[column];
+            const topOffset = guideTop * toneGuide.width;
+            const bottomOffset = guideBottom * toneGuide.width;
+            const nearestX = xWeight < 0.5 ? left : right;
+            const nearestY = guideYWeight < 0.5 ? guideTop : guideBottom;
+            darkWeight = toneGuide.polarity[nearestY * toneGuide.width + nearestX] ? 1 : 0;
+            const backgroundTop = toneGuide.background[topOffset + left] * (1 - xWeight) + toneGuide.background[topOffset + right] * xWeight;
+            const backgroundBottom = toneGuide.background[bottomOffset + left] * (1 - xWeight) + toneGuide.background[bottomOffset + right] * xWeight;
+            darkBackground = backgroundTop * (1 - guideYWeight) + backgroundBottom * guideYWeight;
+          }
+          const normalValue = faithfulGray(luminance, chroma, true);
+          const reverseLow = darkBackground + 12;
+          const reverseHigh = Math.min(250, darkBackground + Math.max(112, (255 - darkBackground) * 0.72));
+          const reverseValue = 245 - smoothStep(reverseLow, reverseHigh, luminance) * 230;
+          let outputRed = normalValue * (1 - darkWeight) + reverseValue * darkWeight;
+          let outputGreen = outputRed;
+          let outputBlue = outputRed;
+          let override = null;
+          for (let index = active.length - 1; index >= 0; index -= 1) {
+            if (column >= active[index].left && column < active[index].right) { override = active[index]; break; }
+          }
+          if (override) {
+            const edgeDistance = Math.min(column - override.left, override.right - 1 - column, globalY - override.top, override.bottom - 1 - globalY);
+            let overrideWeight = smoothStep(0, override.feather, edgeDistance);
+            if (override.mode === "original") {
+              const reference = darkWeight > 0.5 ? darkBackground : 255;
+              overrideWeight *= smoothStep(5, 46, Math.abs(luminance - reference));
+              outputRed = outputRed * (1 - overrideWeight) + red * overrideWeight;
+              outputGreen = outputGreen * (1 - overrideWeight) + green * overrideWeight;
+              outputBlue = outputBlue * (1 - overrideWeight) + blue * overrideWeight;
+            } else {
+              let overrideValue = outputRed;
+              if (override.mode === "binary") overrideValue = outputRed < 148 ? 0 : 255;
+              else if (override.mode === "reverse") overrideValue = reverseValue;
+              else if (override.mode === "gray") overrideValue = faithfulGray(luminance, chroma, false);
+              outputRed = outputRed * (1 - overrideWeight) + overrideValue * overrideWeight;
+              outputGreen = outputRed;
+              outputBlue = outputRed;
+            }
+          }
+          data[offset] = clamp(Math.round(outputRed), 0, 255);
+          data[offset + 1] = clamp(Math.round(outputGreen), 0, 255);
+          data[offset + 2] = clamp(Math.round(outputBlue), 0, 255);
+          data[offset + 3] = 255;
+        }
+      }
+      return imageData;
+    }
+
+    function selectedRegion() { return regions.find((region) => region.id === selectedId) || null; }
+
+    function updateSelectionUI() {
+      const selected = selectedRegion();
+      const activeMode = selected ? selected.mode : drawingMode;
+      modeButtons.forEach((button) => button.classList.toggle("is-active", button.dataset.ppMode === activeMode));
+      if (selected) selectionLabel.textContent = `区域 ${regions.indexOf(selected) + 1} · ${selected.auto ? "智能识别" : "手动框选"} · 当前为${MODE_NAMES[selected.mode]}`;
+      else selectionLabel.textContent = `未选中区域 · 新框将使用${MODE_NAMES[drawingMode]}`;
+      updateHistoryButtons();
+      drawRegionOverlay();
+      renderRegionList();
+    }
+
+    function drawRegionOverlay() {
+      regionContext.clearRect(0, 0, regionCanvas.width, regionCanvas.height);
+      const all = draftRegion ? [...regions, draftRegion] : regions;
+      const lineWidth = Math.max(2, regionCanvas.width / 520);
+      regionContext.lineWidth = lineWidth;
+      regionContext.font = `${Math.max(11, Math.round(regionCanvas.width / 72))}px sans-serif`;
+      all.forEach((region, index) => {
+        const x = region.x * regionCanvas.width;
+        const y = region.y * regionCanvas.height;
+        const width = region.width * regionCanvas.width;
+        const height = region.height * regionCanvas.height;
+        const color = MODE_COLORS[region.mode];
+        const isSelected = region.id === selectedId;
+        regionContext.save();
+        regionContext.lineWidth = isSelected ? lineWidth * 2 : lineWidth;
+        regionContext.strokeStyle = color;
+        if (region.auto && !isSelected) regionContext.setLineDash([lineWidth * 3, lineWidth * 2]);
+        regionContext.strokeRect(x, y, width, height);
+        const label = `${index + 1} · ${MODE_NAMES[region.mode]}`;
+        const labelWidth = regionContext.measureText(label).width + 12;
+        const labelHeight = Math.max(17, regionCanvas.width / 58);
+        const labelY = Math.max(0, y - labelHeight);
+        regionContext.setLineDash([]);
+        regionContext.fillStyle = color;
+        regionContext.fillRect(x, labelY, labelWidth, labelHeight);
+        regionContext.fillStyle = "#fff";
+        regionContext.fillText(label, x + 6, labelY + labelHeight * 0.72);
+        if (isSelected) {
+          regionContext.fillStyle = "#fff";
+          [[x, y], [x + width, y], [x, y + height], [x + width, y + height]].forEach(([handleX, handleY]) => { regionContext.beginPath(); regionContext.arc(handleX, handleY, lineWidth * 2.2, 0, Math.PI * 2); regionContext.fill(); regionContext.stroke(); });
+        }
+        regionContext.restore();
+      });
+    }
+
+    function renderRegionList() {
+      regionCount.textContent = String(regions.length);
+      if (!regions.length) { regionList.innerHTML = "<p>当前使用整图连续优化，没有矩形覆盖。只有手动框选后，这里才会出现细调区域。</p>"; return; }
+      regionList.innerHTML = regions.map((region, index) => `<div class="pp-region-item ${region.id === selectedId ? "is-selected" : ""}" data-pp-region-id="${region.id}"><i style="--region-color:${MODE_COLORS[region.mode]}"></i><span class="pp-region-copy"><b>${index + 1} · ${MODE_NAMES[region.mode]}</b><small>${region.auto ? "智能识别" : "手动框选"} · 宽 ${Math.round(region.width * 100)}%</small></span><select class="select" data-pp-region-mode="${region.id}" aria-label="区域${index + 1}处理方式">${Object.keys(MODE_NAMES).map((mode) => `<option value="${mode}" ${mode === region.mode ? "selected" : ""}>${MODE_NAMES[mode]}</option>`).join("")}</select><button type="button" data-pp-remove="${region.id}" aria-label="删除区域${index + 1}">×</button></div>`).join("");
+    }
+
+    function detectNewSeams(processedData) {
+      const width = previewSource.width;
+      const height = previewSource.height;
+      if (width < 8 || height < 8) return 0;
+      const originalData = previewSourceContext.getImageData(0, 0, width, height).data;
+      const luminanceAt = (data, x, y) => {
+        const offset = (y * width + x) * 4;
+        return 0.2126 * data[offset] + 0.7152 * data[offset + 1] + 0.0722 * data[offset + 2];
+      };
+      const protectedLineAt = (x, y) => {
+        if (!toneGuide?.polarity) return false;
+        const guideX = clamp(Math.floor((x + 0.5) * toneGuide.width / width), 0, toneGuide.width - 1);
+        const guideY = clamp(Math.floor((y + 0.5) * toneGuide.height / height), 0, toneGuide.height - 1);
+        return toneGuide.polarity[guideY * toneGuide.width + guideX] > 0;
+      };
+      const sampleStep = width > 700 ? 3 : 2;
+      let riskLines = 0;
+      for (let y = 2; y < height - 2; y += 2) {
+        let run = 0;
+        let longestRun = 0;
+        for (let x = 1; x < width - 1; x += sampleStep) {
+          if (protectedLineAt(x, y) || protectedLineAt(x, y - 1)) { run = 0; continue; }
+          const processedDifference = Math.abs(luminanceAt(processedData, x, y) - luminanceAt(processedData, x, y - 1));
+          const originalDifference = Math.abs(luminanceAt(originalData, x, y) - luminanceAt(originalData, x, y - 1));
+          if (processedDifference > 58 && processedDifference - originalDifference > 36) {
+            run += 1;
+            longestRun = Math.max(longestRun, run);
+          } else run = 0;
+        }
+        if (longestRun * sampleStep / width > 0.14) riskLines += 1;
+      }
+      const verticalStep = height > 1800 ? 5 : 3;
+      for (let x = 2; x < width - 2; x += 2) {
+        let run = 0;
+        let longestRun = 0;
+        for (let y = 1; y < height - 1; y += verticalStep) {
+          if (protectedLineAt(x, y) || protectedLineAt(x - 1, y)) { run = 0; continue; }
+          const processedDifference = Math.abs(luminanceAt(processedData, x, y) - luminanceAt(processedData, x - 1, y));
+          const originalDifference = Math.abs(luminanceAt(originalData, x, y) - luminanceAt(originalData, x - 1, y));
+          if (processedDifference > 58 && processedDifference - originalDifference > 36) {
+            run += 1;
+            longestRun = Math.max(longestRun, run);
+          } else run = 0;
+        }
+        if (longestRun * verticalStep / height > 0.1) riskLines += 1;
+      }
+      return riskLines;
+    }
+
+    function renderPreview() {
+      if (!sourceImage || comparing) return;
+      const imageData = previewSourceContext.getImageData(0, 0, previewSource.width, previewSource.height);
+      processPixels(imageData, previewSource.width, previewSource.height, pixelRegions(previewSource.width, previewSource.height), Number(thresholdInput.value), 0, previewSource.height);
+      previewContext.putImageData(imageData, 0, 0);
+      const seamRisk = regions.length ? detectNewSeams(imageData.data) : 0;
+      continuityStatus = seamRisk > 3 ? `连续性提醒：检测到${seamRisk}条可能的新接缝，请降低黑白对比或检查手动区域。` : "连续性检查通过：未发现新增矩形长边或拼接缝。";
+      drawRegionOverlay();
+      updateStats();
+    }
+
+    function schedulePreview() {
+      invalidateOutput();
+      cancelAnimationFrame(previewFrame);
+      previewFrame = requestAnimationFrame(renderPreview);
+    }
+
+    function analyzeBestRegions(recordHistory = true) {
+      if (!sourceImage) return;
+      if (recordHistory) pushHistory();
+      buildToneGuide();
+      regions = [];
+      selectedId = null;
+      renderRegionList();
+      updateSelectionUI();
+      schedulePreview();
+      if (recordHistory) showToast("已恢复保真最佳结果：不加粗、不补线、不重绘。");
+    }
+
+    function pointFromEvent(event) {
+      const rect = regionCanvas.getBoundingClientRect();
+      return { x: clamp((event.clientX - rect.left) / Math.max(1, rect.width), 0, 1), y: clamp((event.clientY - rect.top) / Math.max(1, rect.height), 0, 1) };
+    }
+
+    function hitRegion(point) {
+      for (let index = regions.length - 1; index >= 0; index -= 1) {
+        const region = regions[index];
+        if (point.x >= region.x && point.x <= region.x + region.width && point.y >= region.y && point.y <= region.y + region.height) return region;
+      }
+      return null;
+    }
+
+    function updateDraft(point) {
+      if (!interaction || interaction.type !== "pointer") return;
+      const distance = Math.hypot(point.x - interaction.start.x, point.y - interaction.start.y);
+      if (distance < 0.006 && !draftRegion) return;
+      draftRegion = {
+        id: nextRegionId,
+        x: Math.min(interaction.start.x, point.x), y: Math.min(interaction.start.y, point.y),
+        width: Math.abs(point.x - interaction.start.x), height: Math.abs(point.y - interaction.start.y),
+        mode: drawingMode, auto: false
+      };
+      drawRegionOverlay();
+    }
+
+    function finishPointer(event) {
+      if (!interaction) return;
+      const point = pointFromEvent(event);
+      updateDraft(point);
+      const hitId = interaction.hitId;
+      interaction = null;
+      if (draftRegion && draftRegion.width * regionCanvas.width >= 8 && draftRegion.height * regionCanvas.height >= 8) {
+        pushHistory();
+        regions.push({ ...draftRegion, id: nextRegionId++ });
+        selectedId = regions[regions.length - 1].id;
+        draftRegion = null;
+        updateSelectionUI();
+        schedulePreview();
+      } else {
+        draftRegion = null;
+        selectedId = hitId;
+        updateSelectionUI();
+      }
+    }
+
+    regionCanvas.addEventListener("pointerdown", (event) => {
+      if (!sourceImage || busy) return;
+      event.preventDefault();
+      const start = pointFromEvent(event);
+      interaction = { type: "pointer", start, hitId: hitRegion(start)?.id || null };
+      try { regionCanvas.setPointerCapture(event.pointerId); } catch (_) {}
+    });
+    regionCanvas.addEventListener("pointermove", (event) => { if (interaction) updateDraft(pointFromEvent(event)); });
+    regionCanvas.addEventListener("pointerup", finishPointer);
+    regionCanvas.addEventListener("pointercancel", () => { interaction = null; draftRegion = null; drawRegionOverlay(); });
+
+    modeButtons.forEach((button) => button.addEventListener("click", () => {
+      const mode = button.dataset.ppMode;
+      const selected = selectedRegion();
+      if (selected) {
+        if (selected.mode === mode) return;
+        pushHistory();
+        selected.mode = mode;
+        selected.auto = false;
+        renderRegionList();
+        updateSelectionUI();
+        schedulePreview();
+      } else {
+        drawingMode = mode;
+        updateSelectionUI();
+      }
+    }));
+
+    regionList.addEventListener("click", (event) => {
+      const remove = event.target.closest("[data-pp-remove]");
+      if (remove) {
+        pushHistory();
+        const id = Number(remove.dataset.ppRemove);
+        regions = regions.filter((region) => region.id !== id);
+        if (selectedId === id) selectedId = null;
+        updateSelectionUI();
+        schedulePreview();
+        return;
+      }
+      if (event.target.closest("select")) return;
+      const item = event.target.closest("[data-pp-region-id]");
+      if (item) { selectedId = Number(item.dataset.ppRegionId); updateSelectionUI(); }
+    });
+
+    regionList.addEventListener("change", (event) => {
+      const select = event.target.closest("[data-pp-region-mode]");
+      if (!select) return;
+      const region = regions.find((item) => item.id === Number(select.dataset.ppRegionMode));
+      if (!region || region.mode === select.value) return;
+      pushHistory();
+      region.mode = select.value;
+      region.auto = false;
+      selectedId = region.id;
+      updateSelectionUI();
+      schedulePreview();
+    });
+
+    undoButton.addEventListener("click", () => {
+      if (!undoHistory.length || busy) return;
+      redoHistory.push(snapshot());
+      restoreSnapshot(undoHistory.pop());
+    });
+    redoButton.addEventListener("click", () => {
+      if (!redoHistory.length || busy) return;
+      undoHistory.push(snapshot());
+      restoreSnapshot(redoHistory.pop());
+    });
+    removeSelectedButton.addEventListener("click", () => {
+      if (selectedId === null) return;
+      pushHistory();
+      regions = regions.filter((region) => region.id !== selectedId);
+      selectedId = null;
+      updateSelectionUI();
+      schedulePreview();
+    });
+    smartButton.addEventListener("click", () => analyzeBestRegions(true));
+
+    function applyZoom() {
+      if (!previewSource.width) return;
+      if (zoomSelect.value === "fit") stage.style.width = "min(100%, 760px)";
+      else stage.style.width = `${Math.max(220, Math.round(previewSource.width * Number(zoomSelect.value)))}px`;
+    }
+    zoomSelect.addEventListener("change", applyZoom);
+
+    function preparePreview() {
+      const width = sourceImage.naturalWidth;
+      const height = sourceImage.naturalHeight;
+      const scale = Math.min(1, 1000 / width, 3200 / height, Math.sqrt(2600000 / (width * height)));
+      const previewWidth = Math.max(1, Math.round(width * scale));
+      const previewHeight = Math.max(1, Math.round(height * scale));
+      previewSource.width = previewCanvas.width = regionCanvas.width = previewWidth;
+      previewSource.height = previewCanvas.height = regionCanvas.height = previewHeight;
+      previewSourceContext.fillStyle = "#fff";
+      previewSourceContext.fillRect(0, 0, previewWidth, previewHeight);
+      previewSourceContext.drawImage(sourceImage, 0, 0, previewWidth, previewHeight);
+      stage.style.aspectRatio = `${previewWidth} / ${previewHeight}`;
+      applyZoom();
+    }
+
+    function loadFile(file) {
+      if (!file || !(/image\/(jpeg|png|webp)/i.test(file.type) || /\.(jpe?g|png|webp)$/i.test(file.name))) { showToast("请选择JPG、PNG或WebP图片。"); return; }
+      if (file.size > 80 * 1024 * 1024) { showToast("图片不能超过80 MB。"); return; }
+      const nextUrl = URL.createObjectURL(file);
+      const image = new Image();
+      image.onload = () => {
+        if (sourceUrl) URL.revokeObjectURL(sourceUrl);
+        sourceUrl = nextUrl;
+        sourceImage = image;
+        sourceName = file.name.replace(/\.[^.]+$/, "").replace(/[\\/:*?"<>|]/g, "-") || "打印图片";
+        sourceVersion += 1;
+        nextRegionId = 1;
+        regions = [];
+        selectedId = null;
+        undoHistory = [];
+        redoHistory = [];
+        preparePreview();
+        editor.hidden = false;
+        upload.classList.add("has-file");
+        upload.querySelector("span:last-child").innerHTML = `<b>${escapeHTML(file.name)}</b>${(file.size / 1024 / 1024).toFixed(1)} MB · 点击可更换图片`;
+        analyzeBestRegions(false);
+        updateCustomSettings();
+        updateSelectionUI();
+        updateStats();
+        showToast("已生成保真最佳结果，可直接保存或继续修改。");
+      };
+      image.onerror = () => { URL.revokeObjectURL(nextUrl); showToast("图片读取失败，请换一张图片重试。"); };
+      image.src = nextUrl;
+    }
+
+    fileInput.addEventListener("change", () => loadFile(fileInput.files[0]));
+    ["dragenter", "dragover"].forEach((type) => upload.addEventListener(type, (event) => { event.preventDefault(); upload.classList.add("is-dragging"); }));
+    ["dragleave", "drop"].forEach((type) => upload.addEventListener(type, (event) => { event.preventDefault(); upload.classList.remove("is-dragging"); }));
+    upload.addEventListener("drop", (event) => loadFile(event.dataTransfer.files[0]));
+
+    thresholdInput.addEventListener("input", () => { thresholdLabel.textContent = thresholdInput.value; schedulePreview(); });
+    [paperSelect, orientationSelect, marginSelect, fitModeSelect, positionSelect, dpiSelect].forEach((control) => control.addEventListener("change", () => { updateCustomSettings(); invalidateOutput(); updateStats(); }));
+    [customPaperWidth, customPaperHeight, customMargin, customWidth].forEach((control) => control.addEventListener("input", () => { invalidateOutput(); updateStats(); }));
+
+    function showOriginal() {
+      if (!sourceImage || comparing || busy) return;
+      comparing = true;
+      previewContext.drawImage(previewSource, 0, 0);
+      regionCanvas.style.visibility = "hidden";
+      compareButton.classList.add("is-active");
+      compareButton.textContent = "松开查看结果";
+    }
+    function showProcessed() {
+      if (!comparing) return;
+      comparing = false;
+      regionCanvas.style.visibility = "";
+      compareButton.classList.remove("is-active");
+      compareButton.textContent = "按住查看原图";
+      renderPreview();
+    }
+    compareButton.addEventListener("pointerdown", (event) => { event.preventDefault(); try { compareButton.setPointerCapture(event.pointerId); } catch (_) {} showOriginal(); });
+    compareButton.addEventListener("pointerup", showProcessed);
+    compareButton.addEventListener("pointercancel", showProcessed);
+    compareButton.addEventListener("lostpointercapture", showProcessed);
+
+    async function buildOutputCanvas() {
+      const signature = settingsSignature();
+      if (cachedOutput && cachedSignature === signature) return cachedOutput;
+      const geometry = outputGeometry();
+      if (geometry.pixelWidth * geometry.pixelHeight > 85000000) throw new Error("输出画布过大，请选择600 DPI或更小纸张。");
+      const canvas = document.createElement("canvas");
+      canvas.width = geometry.pixelWidth;
+      canvas.height = geometry.pixelHeight;
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+      context.imageSmoothingEnabled = true;
+      context.imageSmoothingQuality = "high";
+      context.fillStyle = "#fff";
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.drawImage(sourceImage, 0, 0, canvas.width, canvas.height);
+      const mappedRegions = pixelRegions(canvas.width, canvas.height);
+      const stripHeight = 192;
+      for (let top = 0; top < canvas.height; top += stripHeight) {
+        const height = Math.min(stripHeight, canvas.height - top);
+        const strip = context.getImageData(0, top, canvas.width, height);
+        processPixels(strip, canvas.width, height, mappedRegions, Number(thresholdInput.value), top, canvas.height);
+        context.putImageData(strip, 0, top);
+        if ((top / stripHeight) % 4 === 0) {
+          setProgress(8 + top / canvas.height * 76, `正在处理 ${Math.round(top / canvas.height * 100)}%`);
+          await nextFrame();
+        }
+      }
+      cachedOutput = canvas;
+      cachedSignature = signature;
+      setProgress(88, "正在使用浏览器原生PNG编码");
+      return canvas;
+    }
+
+    function canvasPngBlob(canvas) {
+      return new Promise((resolve, reject) => canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error("PNG生成失败")), "image/png"));
+    }
+
+    async function validatePng(blob, width, height) {
+      if (!blob || blob.type !== "image/png" || blob.size < 32) throw new Error("PNG文件数据无效。");
+      const signature = new Uint8Array(await blob.slice(0, 8).arrayBuffer());
+      const expected = [137, 80, 78, 71, 13, 10, 26, 10];
+      if (!expected.every((value, index) => signature[index] === value)) throw new Error("PNG文件头校验失败。");
+      if (typeof createImageBitmap === "function") {
+        const bitmap = await createImageBitmap(blob);
+        try { if (bitmap.width !== width || bitmap.height !== height) throw new Error("PNG重新解码尺寸不一致。"); }
+        finally { bitmap.close(); }
+      } else {
+        await new Promise((resolve, reject) => {
+          const url = URL.createObjectURL(blob);
+          const image = new Image();
+          image.onload = () => { const valid = image.naturalWidth === width && image.naturalHeight === height; URL.revokeObjectURL(url); valid ? resolve() : reject(new Error("PNG重新解码尺寸不一致。")); };
+          image.onerror = () => { URL.revokeObjectURL(url); reject(new Error("PNG重新解码失败。")); };
+          image.src = url;
+        });
+      }
+      return true;
+    }
+
+    async function makeCompatiblePng() {
+      const canvas = await buildOutputCanvas();
+      const blob = await canvasPngBlob(canvas);
+      setProgress(94, "正在重新解码验证PNG");
+      await validatePng(blob, canvas.width, canvas.height);
+      setProgress(100, "兼容性校验通过");
+      return { blob, geometry: outputGeometry() };
+    }
+
+    async function runExport(action) {
+      if (!sourceImage || busy) return;
+      setBusy(true);
+      setProgress(3, "准备高分辨率画布");
+      try {
+        const result = await makeCompatiblePng();
+        await action(result.blob, result.geometry);
+      } catch (error) {
+        console.error(error);
+        setProgress(0, "生成失败");
+        showToast(error.message || "生成失败，请改用600 DPI后重试。");
+      } finally { setBusy(false); }
+    }
+
+    async function chooseSaveHandle(suggestedName) {
+      if (typeof window.showSaveFilePicker !== "function") return null;
+      try {
+        return await window.showSaveFilePicker({ suggestedName, types: [{ description: "PNG图片", accept: { "image/png": [".png"] } }] });
+      } catch (error) {
+        if (error.name === "AbortError") return false;
+        return null;
+      }
+    }
+
+    downloadButton.addEventListener("click", async () => {
+      if (!sourceImage || busy) return;
+      const filename = `${sourceName}-黑白照片打印修正.png`;
+      const handle = await chooseSaveHandle(filename);
+      if (handle === false) return;
+      runExport(async (blob) => {
+        if (handle) {
+          const writable = await handle.createWritable();
+          await writable.write(blob);
+          await writable.close();
+        } else {
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = filename;
+          link.click();
+          setTimeout(() => URL.revokeObjectURL(url), 1800);
+        }
+        showToast("兼容PNG已保存，并通过重新解码校验。");
+      });
+    });
+
+    function updateDialog() {
+      const geometry = outputGeometry();
+      dialogTitle.textContent = `${geometry.name}${geometry.orientation} · 单页打印`;
+      dialogSummary.innerHTML = [
+        ["纸张", `${geometry.name} · ${geometry.pageWidth.toFixed(1)}×${geometry.pageHeight.toFixed(1)} mm`],
+        ["页边距", `${geometry.margin.toFixed(1)} mm`],
+        ["图片尺寸", `${geometry.imageWidth.toFixed(1)}×${geometry.imageHeight.toFixed(1)} mm`],
+        ["输出像素", `${geometry.pixelWidth}×${geometry.pixelHeight}`],
+        ["输出精度", `${geometry.dpi} DPI`],
+        ["手动细调区域", `${regions.length}个`],
+        ["分页与裁切", "1页 · 不裁切"],
+        ["预计内存", `约${Math.round(geometry.memoryMb)} MB`]
+      ].map(([label, value]) => `<div><span>${label}</span><b>${value}</b></div>`).join("");
+    }
+
+    printButton.addEventListener("click", () => {
+      if (!sourceImage || busy) return;
+      updateDialog();
+      if (typeof printDialog.showModal === "function") printDialog.showModal();
+      else printDialog.setAttribute("open", "");
+    });
+    function closePrintDialog() { if (typeof printDialog.close === "function") printDialog.close(); else printDialog.removeAttribute("open"); }
+    dialogClose.addEventListener("click", closePrintDialog);
+    dialogCancel.addEventListener("click", closePrintDialog);
+    printDialog.addEventListener("click", (event) => { if (event.target === printDialog) closePrintDialog(); });
+
+    dialogConfirm.addEventListener("click", () => {
+      if (!sourceImage || busy) return;
+      closePrintDialog();
+      const printWindow = window.open("", "_blank");
+      if (!printWindow) { showToast("浏览器阻止了打印窗口，请允许本站弹出窗口。"); return; }
+      printWindow.document.write("<!doctype html><meta charset='utf-8'><title>正在生成打印页</title><p style='font:16px sans-serif;padding:24px'>正在生成并验证打印图片，请稍候……</p>");
+      runExport(async (blob, geometry) => {
+        const url = URL.createObjectURL(blob);
+        const title = escapeHTML(`${sourceName}-黑白照片打印修正`);
+        printWindow.document.open();
+        printWindow.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${title}</title><style>@page{size:${geometry.pageWidth.toFixed(3)}mm ${geometry.pageHeight.toFixed(3)}mm;margin:0}*{box-sizing:border-box}html,body{margin:0;padding:0;background:#fff}body{position:relative;width:${geometry.pageWidth.toFixed(3)}mm;height:${geometry.pageHeight.toFixed(3)}mm;overflow:hidden;-webkit-print-color-adjust:exact;print-color-adjust:exact}img{position:absolute;display:block;left:${geometry.left.toFixed(3)}mm;top:${geometry.top.toFixed(3)}mm;width:${geometry.imageWidth.toFixed(3)}mm;height:${geometry.imageHeight.toFixed(3)}mm;object-fit:contain;break-inside:avoid;page-break-inside:avoid}</style></head><body><img id="print-image" src="${url}" alt="黑白打印图片"><script>document.getElementById('print-image').addEventListener('load',function(){setTimeout(function(){window.focus();window.print()},250)})<\/script></body></html>`);
+        printWindow.document.close();
+        setTimeout(() => URL.revokeObjectURL(url), 120000);
+        showToast(`已打开${geometry.name}打印窗口，请确认纸张和最高打印质量。`);
+      });
+    });
+
+    updateCustomSettings();
+    updateSelectionUI();
   }
 
   const ANALYSIS_METRICS = [
